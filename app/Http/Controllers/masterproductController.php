@@ -13,22 +13,29 @@ class masterproductController extends Controller
 {
     protected $judul_halaman_notif;
 
-    public function __construct() 
+    public function __construct()
     {
         $this->judul_halaman_notif = 'Master Product';
     }
-        
+
     public function paging(Request $request): JsonResponse
     {
         $URL = URL::current();
         if (!isset($request->search)) {
             $count = (new masterproduct())->count();
-            $arr_pagination = (new PublicModel())->pagination_without_search($URL,
-            $request->limit, $request->offset);
+            $arr_pagination = (new PublicModel())->pagination_without_search(
+                $URL,
+                $request->limit,
+                $request->offset
+            );
             $todos = (new masterproduct())->get_data_($request->search, $arr_pagination);
         } else {
-            $arr_pagination = (new PublicModel())->pagination_without_search($URL,
-            $request->limit, $request->offset, $request->search);
+            $arr_pagination = (new PublicModel())->pagination_without_search(
+                $URL,
+                $request->limit,
+                $request->offset,
+                $request->search
+            );
             $todos = (new masterproduct())->get_data_($request->search, $arr_pagination);
             $count = $todos->count();
         }
@@ -66,7 +73,8 @@ class masterproductController extends Controller
             DB::rollBack();
             return response()->json([
                 'status' => false,
-                'message' => 'Failed to create data',$e,
+                'message' => 'Failed to create data',
+                $e,
             ], 403);
         }
     }
@@ -120,7 +128,7 @@ class masterproductController extends Controller
         DB::beginTransaction();
         $user_id = 'USER TEST';
         $data = $this->validate($req, [
-           'brandcode' => 'required',
+            'brandcode' => 'required',
             'brandname' => 'required',
             'itemcode' => 'required',
             'mtgcode' => 'required',
@@ -158,27 +166,27 @@ class masterproductController extends Controller
         DB::beginTransaction();
 
         // try {
-            $data_csv = json_decode(json_encode($req->csv), true);
-            foreach ($data_csv as $key => $value) {
-                $data = [];
-                $data['brandcode'] = $value['brandcode'];
-$data['brandname'] = $value['brandname'];
-$data['itemcode'] = $value['itemcode'];
-$data['mtgcode'] = $value['mtgcode'];
-$data['parentcode'] = $value['parentcode'];
-$data['itemname'] = $value['itemname'];
+        $data_csv = json_decode(json_encode($req->csv), true);
+        foreach ($data_csv as $key => $value) {
+            $data = [];
+            $data['brandcode'] = $value['brandcode'];
+            $data['brandname'] = $value['brandname'];
+            $data['itemcode'] = $value['itemcode'];
+            $data['mtgcode'] = $value['mtgcode'];
+            $data['parentcode'] = $value['parentcode'];
+            $data['itemname'] = $value['itemname'];
 
-                $data['created_by'] = 'user_test';
-                $data['updated_by'] = 'user_test';
-                masterproduct::create($data);
-            }
+            $data['created_by'] = 'user_test';
+            $data['updated_by'] = 'user_test';
+            masterproduct::create($data);
+        }
 
-            DB::commit();
-            return response()->json([
-                'code' => 201,
-                'status' => true,
-                'message' => 'Created successfully',
-            ], 201);
+        DB::commit();
+        return response()->json([
+            'code' => 201,
+            'status' => true,
+            'message' => 'Created successfully',
+        ], 201);
         // } catch (\Exception $e) {
         //     DB::rollBack();
         //     return response()->json([

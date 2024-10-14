@@ -6,7 +6,8 @@ use App\Models\MKaryawan;
 
 class MKaryawanController extends Controller
 {
-    public function getKaryawans() {
+    public function getKaryawans()
+    {
         try {
             $datas = MKaryawan::select(['nama', 'kode_department'])->with(['department'])->get();
 
@@ -14,7 +15,7 @@ class MKaryawanController extends Controller
                 'status' => 'success',
                 'message' => 'get data karyawan success!',
                 'data' => $datas
-            ],200);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'failed',
@@ -22,6 +23,5 @@ class MKaryawanController extends Controller
                 'error' => $e->getMessage()
             ], 400);
         }
-        
     }
 }

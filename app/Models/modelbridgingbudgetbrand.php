@@ -31,67 +31,67 @@ class modelbridgingbudgetbrand extends Model
             ->whereNull('deleted_by')
             ->select(
                 'id',
-                            'brandcode', 
-                            'kodebeban', 
-                            'itemcode', 
-                            'mtgcode', 
-                            'parentcode', 
-                            'itemname', 
-                        )
+                'brandcode',
+                'kodebeban',
+                'itemcode',
+                'mtgcode',
+                'parentcode',
+                'itemname',
+            )
             ->offset($arr_pagination['offset'])
             ->limit($arr_pagination['limit'])
             ->orderBy('id', 'ASC')
             ->get();
-            // ->toSql();
-            // ->orderBy('id', 'ASC')->toSql();
+        // ->toSql();
+        // ->orderBy('id', 'ASC')->toSql();
         return $data;
 
-    /**
-     * Example method to fetch filtered data based on search.
-     */
-    // public function get_data_($search, $arr_pagination)
-    // {
-    //     if (!empty($search)) {
-    //         $arr_pagination['offset'] = 0;
-    //     }
-    //     $search = strtolower($search);
+        /**
+         * Example method to fetch filtered data based on search.
+         */
+        // public function get_data_($search, $arr_pagination)
+        // {
+        //     if (!empty($search)) {
+        //         $arr_pagination['offset'] = 0;
+        //     }
+        //     $search = strtolower($search);
 
-    //     $data = modelbridgingbudgetbrand::whereRaw(" KodeBeban like '%$search%' 
-    //     AND deleted_by IS NULL")
-    //         ->select(
-    //             'KodeBeban', 
-    //             'KodeDivisi', 
-    //             'Expense', 
-    //             'ExpenseGroup', 
-    //             'GroupBeban', 
-    //             'GroupCostCenter', 
-    //             'CostCenter', 
-    //             'TOTALFINAL', 
-    //             'TOTAL', 
-    //             'JAN', 'FEB', 'MAR', 'APR', 'MEI', 
-    //             'JUN', 'JUL', 'AGS', 'SEP', 'OKT', 
-    //             'NOP', 'DES', 
-    //             'RealizationN1', 'RealizationN2', 'RealizationN3', 'RealizationN4', 
-    //             'RealizationN5', 'RealizationN6', 'RealizationN7', 'RealizationN8', 
-    //             'RealizationN9', 'RealizationN10', 'RealizationN11', 'RealizationN12', 
-    //             'TotalRealization', 
-    //             'Balance', 
-    //             'FA', 
-    //             'Year', 
-    //             'Status', 
-    //             'Type', 
-    //             'status_viewed', 
-    //             'userid', 
-    //             'ipaddress', 
-    //             'modtime'
-    //         )
-    //         ->offset($arr_pagination['offset'])
-    //         ->limit($arr_pagination['limit'])
-    //         ->orderBy('id', 'ASC')
-    //         ->get();
-    //         // ->toSql();
+        //     $data = modelbridgingbudgetbrand::whereRaw(" KodeBeban like '%$search%' 
+        //     AND deleted_by IS NULL")
+        //         ->select(
+        //             'KodeBeban', 
+        //             'KodeDivisi', 
+        //             'Expense', 
+        //             'ExpenseGroup', 
+        //             'GroupBeban', 
+        //             'GroupCostCenter', 
+        //             'CostCenter', 
+        //             'TOTALFINAL', 
+        //             'TOTAL', 
+        //             'JAN', 'FEB', 'MAR', 'APR', 'MEI', 
+        //             'JUN', 'JUL', 'AGS', 'SEP', 'OKT', 
+        //             'NOP', 'DES', 
+        //             'RealizationN1', 'RealizationN2', 'RealizationN3', 'RealizationN4', 
+        //             'RealizationN5', 'RealizationN6', 'RealizationN7', 'RealizationN8', 
+        //             'RealizationN9', 'RealizationN10', 'RealizationN11', 'RealizationN12', 
+        //             'TotalRealization', 
+        //             'Balance', 
+        //             'FA', 
+        //             'Year', 
+        //             'Status', 
+        //             'Type', 
+        //             'status_viewed', 
+        //             'userid', 
+        //             'ipaddress', 
+        //             'modtime'
+        //         )
+        //         ->offset($arr_pagination['offset'])
+        //         ->limit($arr_pagination['limit'])
+        //         ->orderBy('id', 'ASC')
+        //         ->get();
+        //         // ->toSql();
 
-    //     return $data;
-    // }
-            }
+        //     return $data;
+        // }
+    }
 }

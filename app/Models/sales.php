@@ -31,20 +31,20 @@ class sales extends Model
             ->whereNull('deleted_by')
             ->select(
                 'id',
-                            'brandcode', 
-                            'itemname',
-                            'itemcode', 
-                            'sales', 
-                            'yop', 
-                            'mop', 
-                            'distcode', 
-                        )
+                'brandcode',
+                'itemname',
+                'itemcode',
+                'sales',
+                'yop',
+                'mop',
+                'distcode',
+            )
             ->offset($arr_pagination['offset'])
             ->limit($arr_pagination['limit'])
             ->orderBy('id', 'ASC')
             ->get();
-            // ->toSql();
-            // ->orderBy('id', 'ASC')->toSql();
+        // ->toSql();
+        // ->orderBy('id', 'ASC')->toSql();
         return $data;
-            }
+    }
 }

@@ -25,7 +25,8 @@ class targetpenjualan extends Model
         return $date->format('Y-m-d H:i:s');
     }
 
-    public function get_data_x($search, $arr_pagination){
+    public function get_data_x($search, $arr_pagination)
+    {
         if (!empty($search)) $arr_pagination['offset'] = 0;
         $data = DB::connection('pgsql')->select("SELECT 
     a.yop, 
@@ -46,12 +47,12 @@ FROM
     GROUP BY yop, mop, distcode, brandcode
 ) AS a
 GROUP BY a.yop, a.mop, a.distcode, a.brandcode;");
-            // ->offset($arr_pagination['offset'])
-            // ->limit($arr_pagination['limit'])
-            // ->orderBy('id', 'ASC')
-            // ->get();
-            // ->toSql();
-            // ->orderBy('id', 'ASC')->toSql();
+        // ->offset($arr_pagination['offset'])
+        // ->limit($arr_pagination['limit'])
+        // ->orderBy('id', 'ASC')
+        // ->get();
+        // ->toSql();
+        // ->orderBy('id', 'ASC')->toSql();
         return $data;
     }
 
@@ -63,21 +64,20 @@ GROUP BY a.yop, a.mop, a.distcode, a.brandcode;");
             ->whereNull('deleted_by')
             ->select(
                 'id',
-                            'brandcode', 
-                            'itemname',
-                            'itemcode', 
-                            'distcode',
-                            'target', 
-                            'yop', 
-                            'mop', 
-                            'achievment',
-                        )
+                'brandcode',
+                'itemname',
+                'itemcode',
+                'distcode',
+                'target',
+                'yop',
+                'mop',
+            )
             ->offset($arr_pagination['offset'])
             ->limit($arr_pagination['limit'])
             ->orderBy('id', 'ASC')
             ->get();
-            // ->toSql();
-            // ->orderBy('id', 'ASC')->toSql();
+        // ->toSql();
+        // ->orderBy('id', 'ASC')->toSql();
         return $data;
-            }
+    }
 }

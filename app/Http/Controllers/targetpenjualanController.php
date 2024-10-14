@@ -13,22 +13,29 @@ class targetpenjualanController extends Controller
 {
     protected $judul_halaman_notif;
 
-    public function __construct() 
+    public function __construct()
     {
         $this->judul_halaman_notif = 'Target Penjualan';
     }
-        
+
     public function paging(Request $request): JsonResponse
     {
         $URL = URL::current();
         if (!isset($request->search)) {
             $count = (new targetpenjualan())->count();
-            $arr_pagination = (new PublicModel())->pagination_without_search($URL,
-            $request->limit, $request->offset);
+            $arr_pagination = (new PublicModel())->pagination_without_search(
+                $URL,
+                $request->limit,
+                $request->offset
+            );
             $todos = (new targetpenjualan())->get_data_($request->search, $arr_pagination);
         } else {
-            $arr_pagination = (new PublicModel())->pagination_without_search($URL,
-            $request->limit, $request->offset, $request->search);
+            $arr_pagination = (new PublicModel())->pagination_without_search(
+                $URL,
+                $request->limit,
+                $request->offset,
+                $request->search
+            );
             $todos = (new targetpenjualan())->get_data_($request->search, $arr_pagination);
             $count = $todos->count();
         }
@@ -67,7 +74,8 @@ class targetpenjualanController extends Controller
             DB::rollBack();
             return response()->json([
                 'status' => false,
-                'message' => 'Failed to create data',$e,
+                'message' => 'Failed to create data',
+                $e,
             ], 403);
         }
     }
@@ -121,7 +129,7 @@ class targetpenjualanController extends Controller
         DB::beginTransaction();
         $user_id = 'USER TEST';
         $data = $this->validate($req, [
-           'brandcode' => 'required',
+            'brandcode' => 'required',
             'itemname' => 'required',
             'itemcode' => 'required',
             'target' => 'required',
@@ -163,12 +171,12 @@ class targetpenjualanController extends Controller
             foreach ($data_csv as $key => $value) {
                 $data = [];
                 $data['brandcode'] = $value['brandcode'];
-$data['itemname'] = $value['itemname'];
-$data['itemcode'] = $value['itemcode'];
-$data['target'] = $value['target'];
-$data['distcode'] = $value['distcode'];
-$data['yop'] = $value['yop'];
-$data['mop'] = $value['mop'];
+                $data['itemname'] = $value['itemname'];
+                $data['itemcode'] = $value['itemcode'];
+                $data['target'] = $value['target'];
+                $data['distcode'] = $value['distcode'];
+                $data['yop'] = $value['yop'];
+                $data['mop'] = $value['mop'];
 
                 $data['created_by'] = 'user_test';
                 $data['updated_by'] = 'user_test';

@@ -17,22 +17,29 @@ use Illuminate\Http\JsonResponse;
 class MMUserController extends Controller
 {
     protected $judul_halaman_notif;
-    public function _construct() 
+    public function _construct()
     {
         $this->judul_halaman_notif = 'MASTER USER';
     }
-        
+
     public function paging(Request $request): JsonResponse
     {
         $URL = URL::current();
         if (!isset($request->search)) {
             $count = (new MMUserModel())->count();
-            $arr_pagination = (new PublicModel())->pagination_without_search($URL,
-            $request->limit, $request->offset);
+            $arr_pagination = (new PublicModel())->pagination_without_search(
+                $URL,
+                $request->limit,
+                $request->offset
+            );
             $todos = (new MMUserModel())->get_data_($request->search, $arr_pagination);
         } else {
-            $arr_pagination = (new PublicModel())->pagination_without_search($URL,
-            $request->limit, $request->offset, $request->search);
+            $arr_pagination = (new PublicModel())->pagination_without_search(
+                $URL,
+                $request->limit,
+                $request->offset,
+                $request->search
+            );
             $todos = (new MMUserModel())->get_data_($request->search, $arr_pagination);
             $count = $todos->count();
         }
@@ -159,18 +166,17 @@ class MMUserController extends Controller
         DB::beginTransaction();
 
         try {
-        $data_csv = json_decode(json_encode($req->csv), true);
-        foreach ($data_csv as $key => $value) {
-            $data=array();
-            $data['nama'] = $value['nama'];
-            $data['nik'] = $value['nik'];
-            $data['telp'] = $value['telp'];
-            $data['alamat'] = $value['alamat'];
+            $data_csv = json_decode(json_encode($req->csv), true);
+            foreach ($data_csv as $key => $value) {
+                $data = array();
+                $data['nama'] = $value['nama'];
+                $data['nik'] = $value['nik'];
+                $data['telp'] = $value['telp'];
+                $data['alamat'] = $value['alamat'];
 
-            $data['created_by'] = 'ssss';
-            $data['updated_by'] = 'ssss';
-            $todos = MMUserModel::create($data);
-            
+                $data['created_by'] = 'ssss';
+                $data['updated_by'] = 'ssss';
+                $todos = MMUserModel::create($data);
             }
             DB::commit();
             return response()->json([
@@ -183,9 +189,8 @@ class MMUserController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'failed to create data',
-                'e'=>$e,
+                'e' => $e,
             ], 403);
         }
     }
-
 }

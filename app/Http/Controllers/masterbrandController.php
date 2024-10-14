@@ -13,22 +13,29 @@ class masterbrandController extends Controller
 {
     protected $judul_halaman_notif;
 
-    public function __construct() 
+    public function __construct()
     {
         $this->judul_halaman_notif = 'Master Brand';
     }
-        
+
     public function paging(Request $request): JsonResponse
     {
         $URL = URL::current();
         if (!isset($request->search)) {
             $count = (new masterbrand())->count();
-            $arr_pagination = (new PublicModel())->pagination_without_search($URL,
-            $request->limit, $request->offset);
+            $arr_pagination = (new PublicModel())->pagination_without_search(
+                $URL,
+                $request->limit,
+                $request->offset
+            );
             $todos = (new masterbrand())->get_data_($request->search, $arr_pagination);
         } else {
-            $arr_pagination = (new PublicModel())->pagination_without_search($URL,
-            $request->limit, $request->offset, $request->search);
+            $arr_pagination = (new PublicModel())->pagination_without_search(
+                $URL,
+                $request->limit,
+                $request->offset,
+                $request->search
+            );
             $todos = (new masterbrand())->get_data_($request->search, $arr_pagination);
             $count = $todos->count();
         }
@@ -62,7 +69,8 @@ class masterbrandController extends Controller
             DB::rollBack();
             return response()->json([
                 'status' => false,
-                'message' => 'Failed to create data',$e,
+                'message' => 'Failed to create data',
+                $e,
             ], 403);
         }
     }
@@ -116,8 +124,8 @@ class masterbrandController extends Controller
         DB::beginTransaction();
         $user_id = 'USER TEST';
         $data = $this->validate($req, [
-           'brandcode' => 'required',
-           'brandname' => 'required',
+            'brandcode' => 'required',
+            'brandname' => 'required',
         ]);
 
         try {

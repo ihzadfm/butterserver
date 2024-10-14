@@ -31,19 +31,19 @@ class masterproduct extends Model
             ->whereNull('deleted_by')
             ->select(
                 'id',
-                            'brandcode', 
-                            'brandname',
-                            'itemcode', 
-                            'mtgcode', 
-                            'parentcode', 
-                            'itemname', 
-                        )
+                'brandcode',
+                'brandname',
+                'itemcode',
+                'mtgcode',
+                'parentcode',
+                'itemname',
+            )
             ->offset($arr_pagination['offset'])
             ->limit($arr_pagination['limit'])
             ->orderBy('id', 'ASC')
             ->get();
-            // ->toSql();
-            // ->orderBy('id', 'ASC')->toSql();
+        // ->toSql();
+        // ->orderBy('id', 'ASC')->toSql();
         return $data;
-            }
+    }
 }

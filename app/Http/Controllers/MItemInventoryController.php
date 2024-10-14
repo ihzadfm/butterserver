@@ -13,22 +13,29 @@ class MItemInventoryController extends Controller
 {
     protected $judul_halaman_notif;
 
-    public function __construct() 
+    public function __construct()
     {
         $this->judul_halaman_notif = 'INVENTORY ITEM';
     }
-        
+
     public function paging(Request $request): JsonResponse
     {
         $URL = URL::current();
         if (!isset($request->search)) {
             $count = (new MItemInventory())->count();
-            $arr_pagination = (new PublicModel())->pagination_without_search($URL,
-            $request->limit, $request->offset);
+            $arr_pagination = (new PublicModel())->pagination_without_search(
+                $URL,
+                $request->limit,
+                $request->offset
+            );
             $todos = (new MItemInventory())->get_data_($request->search, $arr_pagination);
         } else {
-            $arr_pagination = (new PublicModel())->pagination_without_search($URL,
-            $request->limit, $request->offset, $request->search);
+            $arr_pagination = (new PublicModel())->pagination_without_search(
+                $URL,
+                $request->limit,
+                $request->offset,
+                $request->search
+            );
             $todos = (new MItemInventory())->get_data_($request->search, $arr_pagination);
             $count = $todos->count();
         }

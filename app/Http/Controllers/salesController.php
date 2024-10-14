@@ -13,22 +13,29 @@ class salesController extends Controller
 {
     protected $judul_halaman_notif;
 
-    public function __construct() 
+    public function __construct()
     {
         $this->judul_halaman_notif = 'Sales';
     }
-        
+
     public function paging(Request $request): JsonResponse
     {
         $URL = URL::current();
         if (!isset($request->search)) {
             $count = (new sales())->count();
-            $arr_pagination = (new PublicModel())->pagination_without_search($URL,
-            $request->limit, $request->offset);
+            $arr_pagination = (new PublicModel())->pagination_without_search(
+                $URL,
+                $request->limit,
+                $request->offset
+            );
             $todos = (new sales())->get_data_($request->search, $arr_pagination);
         } else {
-            $arr_pagination = (new PublicModel())->pagination_without_search($URL,
-            $request->limit, $request->offset, $request->search);
+            $arr_pagination = (new PublicModel())->pagination_without_search(
+                $URL,
+                $request->limit,
+                $request->offset,
+                $request->search
+            );
             $todos = (new sales())->get_data_($request->search, $arr_pagination);
             $count = $todos->count();
         }
@@ -67,7 +74,8 @@ class salesController extends Controller
             DB::rollBack();
             return response()->json([
                 'status' => false,
-                'message' => 'Failed to create data',$e,
+                'message' => 'Failed to create data',
+                $e,
             ], 403);
         }
     }
@@ -121,7 +129,7 @@ class salesController extends Controller
         DB::beginTransaction();
         $user_id = 'USER TEST';
         $data = $this->validate($req, [
-           'brandcode' => 'required',
+            'brandcode' => 'required',
             'itemname' => 'required',
             'itemcode' => 'required',
             'sales' => 'required',
@@ -168,8 +176,8 @@ class salesController extends Controller
                 $data['itemcode'] = $value['itemcode'];
                 $data['sales'] = $value['sales'];
                 $data['yop'] = $value['yop'];
-                $data['mop'] = $value['mop'];                
-                $data['distcode'] = $value['distcode'];                
+                $data['mop'] = $value['mop'];
+                $data['distcode'] = $value['distcode'];
 
                 $data['created_by'] = 'user_test';
                 $data['updated_by'] = 'user_test';

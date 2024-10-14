@@ -10,7 +10,8 @@ class MKaryawan extends Model
     use SoftDeletes;
     protected $table = 'm_karyawans';
 
-    public function department() {
+    public function department()
+    {
         return $this->belongsTo(MDepartment::class, 'kode_department', 'kode_department');
     }
 }
