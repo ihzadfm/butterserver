@@ -82,4 +82,11 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->put('/sales/{id}', ['uses' => 'salesController@update']); // Memperbarui data berdasarkan ID
     $router->delete('/sales/{id}', ['uses' => 'salesController@destroy']);
     $router->post('/salesBulky', ['uses' => 'salesController@storeBulky']);
+
+    $router->get('/bridgingbrand', ['uses' => 'masterbridgingbrandController@paging']);
+    $router->post('/bridgingbrand', ['uses' => 'masterbridgingbrandController@store']); // Menyimpan data baru
+    $router->get('/bridgingbrand/{id}', ['uses' => 'masterbridgingbrandController@show']); // Menampilkan detail data berdasarkan ID
+    $router->put('/bridgingbrand/{id}', ['uses' => 'masterbridgingbrandController@update']); // Memperbarui data berdasarkan ID
+    $router->delete('/bridgingbrand/{id}', ['uses' => 'masterbridgingbrandController@destroy']);
+    $router->post('/bridgingbudgetbrandBulky', ['uses' => 'masterbridgingbrandController@storeBulky']);
 });
