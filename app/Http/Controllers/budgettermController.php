@@ -6,29 +6,29 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Http\JsonResponse;
-use App\Models\masterbrand;
+use App\Models\BudgetMonitoring;
 use App\Models\PublicModel;
 
-class masterbridgingbrandController extends Controller
+class budgettermController extends Controller
 {
     protected $judul_halaman_notif;
 
     public function __construct()
     {
-        $this->judul_halaman_notif = 'Master Bridging Brand';
+        $this->judul_halaman_notif = 'BUDGET TERM';
     }
 
     public function paging(Request $request): JsonResponse
     {
         $URL = URL::current();
         if (!isset($request->search)) {
-            $count = (new masterbrand())->count();
+            $count = (new BudgetMonitoring())->count();
             $arr_pagination = (new PublicModel())->pagination_without_search(
                 $URL,
                 $request->limit,
                 $request->offset
             );
-            $todos = (new masterbrand())->get_data_x($request->search, $arr_pagination);
+            $todos = (new BudgetMonitoring())->get_data_x($request->search, $arr_pagination);
         } else {
             $arr_pagination = (new PublicModel())->pagination_without_search(
                 $URL,
@@ -36,7 +36,7 @@ class masterbridgingbrandController extends Controller
                 $request->offset,
                 $request->search
             );
-            $todos = (new masterbrand())->get_data_x($request->search, $arr_pagination);
+            $todos = (new BudgetMonitoring())->get_data_x($request->search, $arr_pagination);
             $count = $todos->count();
         }
 
@@ -46,3 +46,4 @@ class masterbridgingbrandController extends Controller
         );
     }
 }
+

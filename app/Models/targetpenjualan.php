@@ -47,12 +47,6 @@ FROM
     GROUP BY yop, mop, distcode, brandcode
 ) AS a
 GROUP BY a.yop, a.mop, a.distcode, a.brandcode;");
-        // ->offset($arr_pagination['offset'])
-        // ->limit($arr_pagination['limit'])
-        // ->orderBy('id', 'ASC')
-        // ->get();
-        // ->toSql();
-        // ->orderBy('id', 'ASC')->toSql();
         return $data;
     }
 
@@ -60,8 +54,15 @@ GROUP BY a.yop, a.mop, a.distcode, a.brandcode;");
     {
         if (!empty($search)) $arr_pagination['offset'] = 0;
         $search = strtolower($search);
-        $data = targetpenjualan::whereRaw(" \"brandcode\" like '%$search%' ")
-            ->whereNull('deleted_by')
+        $data = targetpenjualan::where(function ($query) use ($search) {
+            $query->whereRaw("LOWER(\"brandcode\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"itemname\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"itemcode\") LIKE ?", ["%$search%"])
+                ->orWhere("target", "LIKE", "%$search%")
+                ->orWhere("yop", "LIKE", "%$search%")
+                ->orWhere("mop", "LIKE", "%$search%")
+                ->orWhere("distcode", "LIKE", "%$search%");
+        })
             ->select(
                 'id',
                 'brandcode',

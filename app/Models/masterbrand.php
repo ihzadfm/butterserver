@@ -15,79 +15,45 @@ class masterbrand extends Model
     protected $table = 'masterbrand';  // Correct table name from the migration
     protected $guarded = [];  // Guarded attributes are kept empty to allow mass assignment
 
-    /**
-     * Serialize date to a specific format.
-     */
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
+    }
+
+    public function get_data_x($search, $arr_pagination)
+    {
+        if (!empty($search)) $arr_pagination['offset'] = 0;
+        $data = DB::connection('pgsql')->select("SELECT
+    mbb.brandcode,
+    mb.brandname,
+    mbb.kodebeban
+FROM
+    m_bridging_budget AS mbb
+LEFT JOIN
+    masterbrand AS mb
+ON
+    mb.brandcode = mbb.brandcode
+WHERE
+    mbb.kodebeban IS NOT NULL;");
+        return $data;
     }
 
     public function get_data_($search, $arr_pagination)
     {
         if (!empty($search)) $arr_pagination['offset'] = 0;
         $search = strtolower($search);
-        $data = masterbrand::whereRaw(" \"brandcode\" like '%$search%' ")
+        $data = masterbrand::whereRaw("LOWER(brandcode) LIKE ?", ["%$search%"])
+            ->orWhereRaw("LOWER(brandname) LIKE ?", ["%$search%"])
             ->whereNull('deleted_by')
             ->select(
                 'id',
                 'brandcode',
-                'brandname',
+                'brandname'
             )
             ->offset($arr_pagination['offset'])
             ->limit($arr_pagination['limit'])
             ->orderBy('id', 'ASC')
             ->get();
-        // ->toSql();
-        // ->orderBy('id', 'ASC')->toSql();
         return $data;
-
-        /**
-         * Example method to fetch filtered data based on search.
-         */
-        // public function get_data_($search, $arr_pagination)
-        // {
-        //     if (!empty($search)) {
-        //         $arr_pagination['offset'] = 0;
-        //     }
-        //     $search = strtolower($search);
-
-        //     $data = masterbrand::whereRaw(" KodeBeban like '%$search%' 
-        //     AND deleted_by IS NULL")
-        //         ->select(
-        //             'KodeBeban', 
-        //             'KodeDivisi', 
-        //             'Expense', 
-        //             'ExpenseGroup', 
-        //             'GroupBeban', 
-        //             'GroupCostCenter', 
-        //             'CostCenter', 
-        //             'TOTALFINAL', 
-        //             'TOTAL', 
-        //             'JAN', 'FEB', 'MAR', 'APR', 'MEI', 
-        //             'JUN', 'JUL', 'AGS', 'SEP', 'OKT', 
-        //             'NOP', 'DES', 
-        //             'RealizationN1', 'RealizationN2', 'RealizationN3', 'RealizationN4', 
-        //             'RealizationN5', 'RealizationN6', 'RealizationN7', 'RealizationN8', 
-        //             'RealizationN9', 'RealizationN10', 'RealizationN11', 'RealizationN12', 
-        //             'TotalRealization', 
-        //             'Balance', 
-        //             'FA', 
-        //             'Year', 
-        //             'Status', 
-        //             'Type', 
-        //             'status_viewed', 
-        //             'userid', 
-        //             'ipaddress', 
-        //             'modtime'
-        //         )
-        //         ->offset($arr_pagination['offset'])
-        //         ->limit($arr_pagination['limit'])
-        //         ->orderBy('id', 'ASC')
-        //         ->get();
-        //         // ->toSql();
-
-        //     return $data;
-        // }
     }
 }

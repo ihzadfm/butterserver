@@ -46,3 +46,4 @@ class vstargetsalesController extends Controller
         );
     }
 }
+

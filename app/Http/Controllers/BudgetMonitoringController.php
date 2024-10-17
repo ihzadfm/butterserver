@@ -80,10 +80,7 @@ class BudgetMonitoringController extends Controller
             'realizationn11' => 'required',
             'realizationn12' => 'required',
             'totalrealization' => 'required',
-            'balance' => 'required',
-            'fa' => 'required',
             'year' => 'required',
-            'status' => 'required',
         ]);
 
         try {

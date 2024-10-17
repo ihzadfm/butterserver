@@ -27,8 +27,16 @@ class sales extends Model
     {
         if (!empty($search)) $arr_pagination['offset'] = 0;
         $search = strtolower($search);
-        $data = sales::whereRaw(" \"brandcode\" like '%$search%' ")
-            ->whereNull('deleted_by')
+        $data = sales::where(function ($query) use ($search) {
+            $query->whereRaw("LOWER(\"brandcode\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"itemname\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"itemcode\") LIKE ?", ["%$search%"])
+                // Untuk kolom yang berupa angka, gunakan langsung LIKE tanpa LOWER()
+                ->orWhere("sales", "LIKE", "%$search%")
+                ->orWhere("yop", "LIKE", "%$search%")
+                ->orWhere("mop", "LIKE", "%$search%")
+                ->orWhere("distcode", "LIKE", "%$search%");
+        })
             ->select(
                 'id',
                 'brandcode',
