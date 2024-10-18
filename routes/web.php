@@ -74,6 +74,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->delete('/targetpenjualan/{id}', ['uses' => 'targetpenjualanController@destroy']);
     $router->post('/targetpenjualanBulky', ['uses' => 'targetpenjualanController@storeBulky']);
     $router->get('/vstargetsales', ['uses' => 'vstargetsalesController@paging']);
+    $router->get('/bridgingtargetsales', ['uses' => 'bridgingtargetsalesController@paging']);
 
     //sales
     $router->get('/sales', ['uses' => 'salesController@paging']);

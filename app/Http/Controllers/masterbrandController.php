@@ -37,7 +37,8 @@ class masterbrandController extends Controller
                 $request->search
             );
             $todos = (new masterbrand())->get_data_($request->search, $arr_pagination);
-            $count = $todos->count();
+            $count = count($todos);
+
         }
 
         return response()->json(

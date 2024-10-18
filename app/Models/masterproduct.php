@@ -27,23 +27,32 @@ class masterproduct extends Model
     {
         if (!empty($search)) $arr_pagination['offset'] = 0;
         $search = strtolower($search);
-        $data = masterproduct::whereRaw(" \"brandcode\" like '%$search%' ")
-            ->whereNull('deleted_by')
-            ->select(
-                'id',
-                'brandcode',
-                'brandname',
-                'itemcode',
-                'mtgcode',
-                'parentcode',
-                'itemname',
-            )
-            ->offset($arr_pagination['offset'])
-            ->limit($arr_pagination['limit'])
-            ->orderBy('id', 'ASC')
-            ->get();
-        // ->toSql();
-        // ->orderBy('id', 'ASC')->toSql();
+
+        $data = masterproduct::where(function ($query) use ($search) {
+            $query->whereRaw("LOWER(\"brandcode\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"brandname\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"itemcode\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"itemname\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"mtgcode\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"parentcode\") LIKE ?", ["%$search%"])
+                // Untuk kolom angka, gunakan langsung LIKE tanpa LOWER()
+                ->orWhere("id", "LIKE", "%$search%");
+        })
+        ->whereNull('deleted_by')
+        ->select(
+            'id',
+            'brandcode',
+            'brandname',
+            'itemcode',
+            'mtgcode',
+            'parentcode',
+            'itemname'
+        )
+        ->offset($arr_pagination['offset'])
+        ->limit($arr_pagination['limit'])
+        ->orderBy('id', 'ASC')
+        ->get();
+
         return $data;
     }
 }
