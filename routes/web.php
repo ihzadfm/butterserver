@@ -40,6 +40,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/BudgetMonitoring/{id}', ['uses' => 'BudgetMonitoringController@show']); // Menampilkan detail data berdasarkan ID
     $router->put('/BudgetMonitoring/{id}', ['uses' => 'BudgetMonitoringController@update']); // Memperbarui data berdasarkan ID
     $router->delete('/BudgetMonitoring/{id}', ['uses' => 'BudgetMonitoringController@destroy']);
+    $router->delete('/BudgetMonitoringdelete', ['uses' => 'BudgetMonitoringController@deleteAll']);
     $router->post('/BudgetMonitoringBulky', ['uses' => 'BudgetMonitoringController@storeBulky']);
 
     //masterbrand
@@ -48,6 +49,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/masterbrand/{id}', ['uses' => 'masterbrandController@show']); // Menampilkan detail data berdasarkan ID
     $router->put('/masterbrand/{id}', ['uses' => 'masterbrandController@update']); // Memperbarui data berdasarkan ID
     $router->delete('/masterbrand/{id}', ['uses' => 'masterbrandController@destroy']);
+    $router->delete('/masterbranddelete', ['uses' => 'masterbrandController@deleteAll']);
     $router->post('/masterbrandBulky', ['uses' => 'masterbrandController@storeBulky']);
 
     //bridgingbudgetbrand
@@ -56,6 +58,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/bridgingbudgetbrand/{id}', ['uses' => 'bridgingbudgetbrandController@show']); // Menampilkan detail data berdasarkan ID
     $router->put('/bridgingbudgetbrand/{id}', ['uses' => 'bridgingbudgetbrandController@update']); // Memperbarui data berdasarkan ID
     $router->delete('/bridgingbudgetbrand/{id}', ['uses' => 'bridgingbudgetbrandController@destroy']);
+    $router->delete('/bridgingbudgetbranddelete', ['uses' => 'bridgingbudgetbrandController@deleteAll']);
     $router->post('/bridgingbudgetbrandBulky', ['uses' => 'bridgingbudgetbrandController@storeBulky']);
 
     //masterproduct
@@ -64,6 +67,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/masterproduct/{id}', ['uses' => 'masterproductController@show']); // Menampilkan detail data berdasarkan ID
     $router->put('/masterproduct/{id}', ['uses' => 'masterproductController@update']); // Memperbarui data berdasarkan ID
     $router->delete('/masterproduct/{id}', ['uses' => 'masterproductController@destroy']);
+    $router->delete('/masterproductdelete', ['uses' => 'masterproductController@deleteAll']);
     $router->post('/masterproductBulky', ['uses' => 'masterproductController@storeBulky']);
 
     //targetpenjualan
@@ -72,6 +76,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/targetpenjualan/{id}', ['uses' => 'targetpenjualanController@show']); // Menampilkan detail data berdasarkan ID
     $router->put('/targetpenjualan/{id}', ['uses' => 'targetpenjualanController@update']); // Memperbarui data berdasarkan ID
     $router->delete('/targetpenjualan/{id}', ['uses' => 'targetpenjualanController@destroy']);
+    $router->delete('/targetpenjualandelete', ['uses' => 'targetpenjualanController@deleteAll']);
     $router->post('/targetpenjualanBulky', ['uses' => 'targetpenjualanController@storeBulky']);
     $router->get('/vstargetsales', ['uses' => 'vstargetsalesController@paging']);
     $router->get('/bridgingtargetsales', ['uses' => 'bridgingtargetsalesController@paging']);
@@ -82,6 +87,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/sales/{id}', ['uses' => 'salesController@show']); // Menampilkan detail data berdasarkan ID
     $router->put('/sales/{id}', ['uses' => 'salesController@update']); // Memperbarui data berdasarkan ID
     $router->delete('/sales/{id}', ['uses' => 'salesController@destroy']);
+    $router->delete('/salesdelete', ['uses' => 'salesController@deleteAll']);
     $router->post('/salesBulky', ['uses' => 'salesController@storeBulky']);
 
     $router->get('/bridgingbrand', ['uses' => 'masterbridgingbrandController@paging']);

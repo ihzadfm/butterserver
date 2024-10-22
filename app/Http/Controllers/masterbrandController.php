@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
 use App\Models\masterbrand;
 use App\Models\PublicModel;
@@ -16,6 +17,33 @@ class masterbrandController extends Controller
     public function __construct()
     {
         $this->judul_halaman_notif = 'Master Brand';
+    }
+
+    public function deleteAll()
+    {
+        try {
+            $rowCount = DB::table('masterbrand')->count();
+            DB::table('masterbrand')->truncate();
+
+            Log::info('All data in masterbrand table has been deleted.', ['row_count' => $rowCount]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'All data deleted successfully',
+                'deleted_rows' => $rowCount
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to delete all data from masterbrand table.', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to delete data',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function paging(Request $request): JsonResponse
