@@ -24,7 +24,7 @@ class distcode extends Model
     {
         if (!empty($search)) $arr_pagination['offset'] = 0;
         $search = strtolower($search);
-        $data = masterbrand::whereRaw("LOWER(distcode) LIKE ?", ["%$search%"])
+        $data = distcode::whereRaw("LOWER(distcode) LIKE ?", ["%$search%"])
             ->orWhereRaw("LOWER(distname) LIKE ?", ["%$search%"])
             ->whereNull('deleted_by')
             ->select(
