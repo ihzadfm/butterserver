@@ -52,6 +52,7 @@ class targetpenjualanController extends Controller
         $user_id = 'USER TEST';
         $data = $this->validate($req, [
             'brandcode' => 'required',
+            'brandname' => 'required',
             'itemname' => 'required',
             'itemcode' => 'required',
             'target' => 'required',
@@ -130,6 +131,7 @@ class targetpenjualanController extends Controller
         $user_id = 'USER TEST';
         $data = $this->validate($req, [
             'brandcode' => 'required',
+            'brandname' => 'required',
             'itemname' => 'required',
             'itemcode' => 'required',
             'target' => 'required',
@@ -171,6 +173,7 @@ class targetpenjualanController extends Controller
             foreach ($data_csv as $key => $value) {
                 $data = [];
                 $data['brandcode'] = $value['brandcode'];
+                $data['brandname'] = $value['brandname'];
                 $data['itemname'] = $value['itemname'];
                 $data['itemcode'] = $value['itemcode'];
                 $data['target'] = $value['target'];

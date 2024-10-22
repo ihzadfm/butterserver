@@ -29,6 +29,7 @@ class sales extends Model
         $search = strtolower($search);
         $data = sales::where(function ($query) use ($search) {
             $query->whereRaw("LOWER(\"brandcode\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"brandname\") LIKE ?", ["%$search%"])
                 ->orWhereRaw("LOWER(\"itemname\") LIKE ?", ["%$search%"])
                 ->orWhereRaw("LOWER(\"itemcode\") LIKE ?", ["%$search%"])
                 // Untuk kolom yang berupa angka, gunakan langsung LIKE tanpa LOWER()
@@ -40,6 +41,7 @@ class sales extends Model
             ->select(
                 'id',
                 'brandcode',
+                'brandname',
                 'itemname',
                 'itemcode',
                 'sales',

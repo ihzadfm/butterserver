@@ -111,6 +111,7 @@ class targetpenjualan extends Model
         $search = strtolower($search);
         $data = targetpenjualan::where(function ($query) use ($search) {
             $query->whereRaw("LOWER(\"brandcode\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"brandname\") LIKE ?", ["%$search%"])
                 ->orWhereRaw("LOWER(\"itemname\") LIKE ?", ["%$search%"])
                 ->orWhereRaw("LOWER(\"itemcode\") LIKE ?", ["%$search%"])
                 ->orWhere("target", "LIKE", "%$search%")
@@ -121,6 +122,7 @@ class targetpenjualan extends Model
             ->select(
                 'id',
                 'brandcode',
+                'brandname',
                 'itemname',
                 'itemcode',
                 'distcode',

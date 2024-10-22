@@ -6,29 +6,29 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Http\JsonResponse;
-use App\Models\modelbridgingbudgetbrand;
+use App\Models\distcode;
 use App\Models\PublicModel;
 
-class bridgingbudgetbrandController extends Controller
+class distcodeController extends Controller
 {
     protected $judul_halaman_notif;
 
     public function __construct()
     {
-        $this->judul_halaman_notif = 'Bridging Budget Brand';
+        $this->judul_halaman_notif = 'Master Distribution Code';
     }
 
     public function paging(Request $request): JsonResponse
     {
         $URL = URL::current();
         if (!isset($request->search)) {
-            $count = (new modelbridgingbudgetbrand())->count();
+            $count = (new distcode())->count();
             $arr_pagination = (new PublicModel())->pagination_without_search(
                 $URL,
                 $request->limit,
                 $request->offset
             );
-            $todos = (new modelbridgingbudgetbrand())->get_data_($request->search, $arr_pagination);
+            $todos = (new distcode())->get_data_($request->search, $arr_pagination);
         } else {
             $arr_pagination = (new PublicModel())->pagination_without_search(
                 $URL,
@@ -36,8 +36,9 @@ class bridgingbudgetbrandController extends Controller
                 $request->offset,
                 $request->search
             );
-            $todos = (new modelbridgingbudgetbrand())->get_data_($request->search, $arr_pagination);
-            $count = $todos->count();
+            $todos = (new distcode())->get_data_($request->search, $arr_pagination);
+            $count = count($todos);
+
         }
 
         return response()->json(
@@ -51,18 +52,13 @@ class bridgingbudgetbrandController extends Controller
         DB::beginTransaction();
         $user_id = 'USER TEST';
         $data = $this->validate($req, [
-            'brandcode' => 'required',
-            'brandname' => 'required',
-            'kodebeban' => 'required',
-            'itemcode' => 'required',
-            'mtgcode' => 'required',
-            'parentcode' => 'required',
-            'itemname' => 'required',
+            'distcode' => 'required',
+            'distname' => 'required',
         ]);
 
         try {
             $data['created_by'] = $user_id;
-            modelbridgingbudgetbrand::create($data);
+            distcode::create($data);
 
             DB::commit();
             return response()->json([
@@ -80,15 +76,15 @@ class bridgingbudgetbrandController extends Controller
         }
     }
 
-    public function destroy(Request $req, String $id)
+    public function destroy(Request $req, int $id)
     {
         DB::beginTransaction();
         $user_id = 'USER TEST';
 
         try {
-            $todo = modelbridgingbudgetbrand::findOrFail($id);
+            $todo = distcode::findOrFail($id);
 
-            modelbridgingbudgetbrand::where('id', $id)->update(['deleted_by' => $user_id]);
+            distcode::where('id', $id)->update(['deleted_by' => $user_id]);
             $todo->delete();
 
             DB::commit();
@@ -109,11 +105,11 @@ class bridgingbudgetbrandController extends Controller
     public function show(String $id): JsonResponse
     {
         try {
-            $bridgingbudgetbrand = modelbridgingbudgetbrand::findOrFail($id);
+            $distcode = distcode::findOrFail($id);
             return response()->json([
                 'code' => 200,
                 'status' => true,
-                'data' => $bridgingbudgetbrand
+                'data' => $distcode
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -124,25 +120,20 @@ class bridgingbudgetbrandController extends Controller
         }
     }
 
-    public function update(Request $req, String $id)
+    public function update(Request $req, int $id)
     {
         DB::beginTransaction();
         $user_id = 'USER TEST';
         $data = $this->validate($req, [
-            'brandcode' => 'required',
-            'brandname' => 'required',
-            'kodebeban' => 'required',
-            'itemcode' => 'required',
-            'mtgcode' => 'required',
-            'parentcode' => 'required',
-            'itemname' => 'required',
+            'distcode' => 'required',
+            'distname' => 'required',
         ]);
 
         try {
-            $bridgingbudgetbrand = modelbridgingbudgetbrand::findOrFail($id);
-            $bridgingbudgetbrand->fill($data)->save();
+            $distcode = distcode::findOrFail($id);
+            $distcode->fill($data)->save();
 
-            modelbridgingbudgetbrand::where('id', $id)->update([
+            distcode::where('id', $id)->update([
                 'updated_by' => $user_id,
             ]);
 
@@ -151,7 +142,7 @@ class bridgingbudgetbrandController extends Controller
                 'code' => 201,
                 'status' => true,
                 'message' => 'Updated successfully',
-                'data' => $bridgingbudgetbrand
+                'data' => $distcode
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -171,17 +162,12 @@ class bridgingbudgetbrandController extends Controller
             $data_csv = json_decode(json_encode($req->csv), true);
             foreach ($data_csv as $key => $value) {
                 $data = [];
-                $data['brandcode'] = $value['brandcode'];
-                $data['brandname'] = $value['brandname'];
-                $data['kodebeban'] = $value['kodebeban'];
-                $data['itemcode'] = $value['itemcode'];
-                $data['mtgcode'] = $value['mtgcode'];
-                $data['parentcode'] = $value['parentcode'];
-                $data['itemname'] = $value['itemname'];
+                $data['distcode'] = $value['distcode'];
+                $data['distname'] = $value['distname'];
 
                 $data['created_by'] = 'user_test';
                 $data['updated_by'] = 'user_test';
-                modelbridgingbudgetbrand::create($data);
+                distcode::create($data);
             }
 
             DB::commit();

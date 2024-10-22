@@ -77,7 +77,41 @@ NOW() AS created_at,   -- Tanggal saat data diinput
     {
         if (!empty($search)) $arr_pagination['offset'] = 0;
         $search = strtolower($search);
-        $data = BudgetMonitoring::whereRaw(" \"kodebeban\" like '%$search%' ")
+        $data = BudgetMonitoring::whereRaw("LOWER(\"kodebeban\") like '%$search%' ")
+            ->orWhereRaw("LOWER(\"kodedivisi\") like '%$search%' ")
+            ->orWhereRaw("LOWER(\"expense\") like '%$search%' ")
+            ->orWhereRaw("LOWER(\"expensegroup\") like '%$search%' ")
+            ->orWhereRaw("LOWER(\"groupbeban\") like '%$search%' ")
+            ->orWhereRaw("LOWER(\"groupcostcenter\") like '%$search%' ")
+            ->orWhereRaw("LOWER(\"costcenter\") like '%$search%' ")
+            ->orWhereRaw("CAST(\"totalfinal\" AS TEXT) like '%$search%' ")  // Menggunakan CAST untuk angka
+            ->orWhereRaw("CAST(\"total\" AS TEXT) like '%$search%' ")  // Menggunakan CAST untuk angka
+            ->orWhereRaw("CAST(\"jan\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"feb\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"mar\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"apr\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"mei\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"jun\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"jul\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"ags\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"sep\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"okt\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"nop\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"des\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"realizationn1\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"realizationn2\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"realizationn3\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"realizationn4\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"realizationn5\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"realizationn6\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"realizationn7\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"realizationn8\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"realizationn9\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"realizationn10\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"realizationn11\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"realizationn12\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"totalrealization\" AS TEXT) like '%$search%' ")
+            ->orWhereRaw("CAST(\"year\" AS TEXT) like '%$search%' ")  // Tahun juga dicari
             ->whereNull('deleted_by')
             ->select(
                 'id',

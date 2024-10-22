@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('m_bridging_budget', function (Blueprint $table) {
             $table->id();
             $table->string('brandcode');
+            $table->string('brandname');
             $table->string('kodebeban');
             $table->string('itemcode');
             $table->string('mtgcode');

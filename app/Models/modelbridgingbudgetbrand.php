@@ -34,6 +34,7 @@ class modelbridgingbudgetbrand extends Model
             ->select(
                 'id',
                 'brandcode',
+                'brandname',
                 'kodebeban',
                 'itemcode',
                 'mtgcode',
@@ -45,6 +46,7 @@ class modelbridgingbudgetbrand extends Model
         if (!empty($search)) {
             $query->where(function($q) use ($search) {
                 $q->whereRaw('LOWER("brandcode") LIKE ?', ["%$search%"])
+                  ->orWhereRaw('LOWER("brandname") LIKE ?', ["%$search%"])
                   ->orWhereRaw('LOWER("kodebeban") LIKE ?', ["%$search%"])
                   ->orWhereRaw('LOWER("itemcode") LIKE ?', ["%$search%"])
                   ->orWhereRaw('LOWER("mtgcode") LIKE ?', ["%$search%"])

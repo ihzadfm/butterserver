@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('mop');
             $table->string('itemcode');
             $table->string('brandcode');
+            $table->string('brandname');
             $table->string('itemname');
             $table->integer('target');
             $table->string('distcode');
