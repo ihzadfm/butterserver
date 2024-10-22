@@ -96,6 +96,9 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/budgetterm', ['uses' => 'budgettermController@paging']);
 
     $router->get('/getdistcodeall', ['uses' => 'distcodeController@paging']);
+    $router->get('/getdistcodeallbrand', ['uses' => 'distcodeController@pagingbrand']);
+    $router->get('/getdistcodeallyear', ['uses' => 'distcodeController@pagingyear']);
+    $router->get('/getdistcodeallmonth', ['uses' => 'distcodeController@pagingmonth']);
 
     // $router->get('/bridgingbrand', ['uses' => 'masterbridgingbrandController@paging']);
     // $router->post('/bridgingbrand', ['uses' => 'masterbridgingbrandController@store']); // Menyimpan data baru
