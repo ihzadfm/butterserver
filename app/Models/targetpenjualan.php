@@ -65,44 +65,86 @@ class targetpenjualan extends Model
         return $data;
     }
 
-    public function get_data_x($search, $arr_pagination)
-    {
-        if (!empty($search)) $arr_pagination['offset'] = 0;
+//     public function get_data_x($search, $arr_pagination)
+//     {
+//         if (!empty($search)) $arr_pagination['offset'] = 0;
 
-        // Menambahkan fitur search berdasarkan keyword
-        $searchQuery = "";
-        if (!empty($search)) {
-            $search = strtolower($search);
-            $searchQuery = "AND (LOWER(a.brandcode) LIKE '%$search%' OR LOWER(a.distcode) LIKE '%$search%')";
-        }
+//         // Menambahkan fitur search berdasarkan keyword
+//         $searchQuery = "";
+//         if (!empty($search)) {
+//             $search = strtolower($search);
+//             $searchQuery = "AND (LOWER(a.brandcode) LIKE '%$search%' OR LOWER(a.distcode) LIKE '%$search%')";
+//         }
 
-        $data = DB::connection('pgsql')->select("SELECT 
+//         $data = DB::connection('pgsql')->select("SELECT 
+//     a.yop, 
+//     a.mop, 
+//     a.distcode, 
+//     a.brandcode, 
+//     a.brandname,   -- Menambahkan brandname dari sales
+//     SUM(a.sales) as sales, 
+//     SUM(a.target) as target, 
+//     ROUND((SUM(a.sales)/SUM(a.target)) * 100, 2) as achievement
+// FROM
+// (
+//     SELECT yop, mop, distcode, brandcode, brandname, SUM(sales) as sales, 0 as target
+//     FROM sales
+//     GROUP BY yop, mop, distcode, brandcode, brandname
+    
+//     UNION ALL
+    
+//     SELECT yop, mop, distcode, brandcode, brandname, 0 as sales, SUM(target) as target
+//     FROM targetpenjualan
+//     GROUP BY yop, mop, distcode, brandcode, brandname
+// ) AS a
+// GROUP BY a.yop, a.mop, a.distcode, a.brandcode, a.brandname");
+//         return $data;
+//     }
+
+public function get_data_x($search, $arr_pagination)
+{
+    if (!empty($search)) $arr_pagination['offset'] = 0;
+
+    // Menambahkan fitur search berdasarkan keyword
+    $searchQuery = "";
+    if (!empty($search)) {
+        $search = strtolower($search);
+        // Pencarian pada kolom non-agregat (brandcode, distcode, brandname)
+        $searchQuery = "AND (LOWER(a.brandcode) LIKE '%$search%' 
+                          OR LOWER(a.distcode) LIKE '%$search%' 
+                          OR LOWER(a.brandname) LIKE '%$search%')";
+    }
+
+    // Query yang diperbaiki
+    $data = DB::connection('pgsql')->select("SELECT 
         a.yop, 
         a.mop, 
         a.distcode, 
         a.brandcode, 
+        a.brandname,   -- Menambahkan brandname dari sales
         SUM(a.sales) as sales, 
         SUM(a.target) as target, 
-        ROUND(CAST((SUM(a.sales)/SUM(a.target)) * 100 AS NUMERIC), 2) as achievement
+        ROUND((SUM(a.sales)/SUM(a.target)) * 100, 2) as achievement
     FROM
     (
-        SELECT yop, mop, distcode, brandcode, SUM(sales) as sales, 0 as target
+        SELECT yop, mop, distcode, brandcode, brandname, SUM(sales) as sales, 0 as target
         FROM sales
-        GROUP BY yop, mop, distcode, brandcode
-
+        GROUP BY yop, mop, distcode, brandcode, brandname
+        
         UNION ALL
-
-        SELECT yop, mop, distcode, brandcode, 0 as sales, SUM(target) as target
+        
+        SELECT yop, mop, distcode, brandcode, brandname, 0 as sales, SUM(target) as target
         FROM targetpenjualan
-        GROUP BY yop, mop, distcode, brandcode
+        GROUP BY yop, mop, distcode, brandcode, brandname
     ) AS a
     WHERE 1=1
-    $searchQuery
-    GROUP BY a.yop, a.mop, a.distcode, a.brandcode
-    LIMIT {$arr_pagination['limit']} OFFSET {$arr_pagination['offset']};");
+    $searchQuery  -- Menambahkan query pencarian
+    GROUP BY a.yop, a.mop, a.distcode, a.brandcode, a.brandname
+    LIMIT {$arr_pagination['limit']} OFFSET {$arr_pagination['offset']}");
 
-        return $data;
-    }
+    return $data;
+}
+
 
 
     public function get_data_($search, $arr_pagination)
