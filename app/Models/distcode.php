@@ -19,6 +19,15 @@ class distcode extends Model
     {
         return $date->format('Y-m-d H:i:s');
     }
+    public function get_data_x($search, $arr_pagination)
+    {
+        if (!empty($search)) $arr_pagination['offset'] = 0;
+        // $search = strtolower($search);
+        $data = DB::select("SELECT id, distcode, distname FROM distcode");
+
+        // $data = "SELECT id, distcode, distname FROM distcode WHERE distcode like '%" . $search . "%' OR distname like '%" . $search . "%'";
+        return $data;
+    }
 
     public function get_data_($search, $arr_pagination)
     {

@@ -18,6 +18,22 @@ class distcodeController extends Controller
         $this->judul_halaman_notif = 'Master Distribution Code';
     }
 
+    // public function showx(Request $request): JsonResponse
+    // {
+    //     $URL =  URL::current();
+
+    //     // return $request;
+    //         $count = (new distcode())->count();
+    //         $arr_pagination = (new PublicModel())->pagination_without_search($URL, $request->limit, $request->offset);
+    //         $todos = (new distcode())->get_data_x($search, $arr_pagination);
+    //         // print_r($todos); 
+
+    //     return response()->json(
+    //         (new PublicModel())->array_respon_200_table($todos, $count, $arr_pagination),
+    //         200
+    //     );
+    // }
+
     public function paging(Request $request): JsonResponse
     {
         $URL = URL::current();
@@ -28,7 +44,7 @@ class distcodeController extends Controller
                 $request->limit,
                 $request->offset
             );
-            $todos = (new distcode())->get_data_($request->search, $arr_pagination);
+            $todos = (new distcode())->get_data_x($request->search, $arr_pagination);
         } else {
             $arr_pagination = (new PublicModel())->pagination_without_search(
                 $URL,
@@ -36,7 +52,7 @@ class distcodeController extends Controller
                 $request->offset,
                 $request->search
             );
-            $todos = (new distcode())->get_data_($request->search, $arr_pagination);
+            $todos = (new distcode())->get_data_x($request->search, $arr_pagination);
             $count = count($todos);
 
         }

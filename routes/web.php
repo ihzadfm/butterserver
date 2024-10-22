@@ -95,6 +95,8 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
     $router->get('/budgetterm', ['uses' => 'budgettermController@paging']);
 
+    $router->get('/getdistcodeall', ['uses' => 'distcodeController@paging']);
+
     // $router->get('/bridgingbrand', ['uses' => 'masterbridgingbrandController@paging']);
     // $router->post('/bridgingbrand', ['uses' => 'masterbridgingbrandController@store']); // Menyimpan data baru
     // $router->get('/bridgingbrand/{id}', ['uses' => 'masterbridgingbrandController@show']); // Menampilkan detail data berdasarkan ID
