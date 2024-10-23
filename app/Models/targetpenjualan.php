@@ -126,8 +126,11 @@ class targetpenjualan extends Model
         a.brandname,   -- Menambahkan brandname dari sales
         SUM(a.sales) as sales, 
         SUM(a.target) as target, 
-        ROUND((SUM(a.sales)/SUM(a.target)) * 100, 2) as achievement
-    FROM
+        CASE 
+        WHEN SUM(a.target) > 0 THEN ROUND((SUM(a.sales) / SUM(a.target)) * 100, 2)
+        ELSE 0
+    END as achievement
+FROM 
     (   SELECT yop, mop, distcode, distname, brandcode, brandname, SUM(sales) as sales, 0 as target
         FROM sales
         GROUP BY yop, mop, distcode, distname, brandcode, brandname
