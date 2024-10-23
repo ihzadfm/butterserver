@@ -85,6 +85,7 @@ class targetpenjualanController extends Controller
             'itemcode' => 'required',
             'target' => 'required',
             'distcode' => 'required',
+            'distname' => 'required',
             'yop' => 'required',
             'mop' => 'required',
         ]);
@@ -206,6 +207,7 @@ class targetpenjualanController extends Controller
                 $data['itemcode'] = $value['itemcode'];
                 $data['target'] = $value['target'];
                 $data['distcode'] = $value['distcode'];
+                $data['distname'] = $value['distname'];
                 $data['yop'] = $value['yop'];
                 $data['mop'] = $value['mop'];
 

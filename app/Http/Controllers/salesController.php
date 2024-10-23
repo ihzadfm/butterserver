@@ -87,6 +87,7 @@ class salesController extends Controller
             'yop' => 'required',
             'mop' => 'required',
             'distcode' => 'required',
+            'distname' => 'required',
         ]);
 
         try {
@@ -166,6 +167,7 @@ class salesController extends Controller
             'yop' => 'required',
             'mop' => 'required',
             'distcode' => 'required',
+            'distname' => 'required',
         ]);
 
         try {
@@ -209,6 +211,7 @@ class salesController extends Controller
                 $data['yop'] = $value['yop'];
                 $data['mop'] = $value['mop'];
                 $data['distcode'] = $value['distcode'];
+                $data['distname'] = $value['distname'];
 
                 $data['created_by'] = 'user_test';
                 $data['updated_by'] = 'user_test';

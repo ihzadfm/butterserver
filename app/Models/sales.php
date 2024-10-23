@@ -36,7 +36,8 @@ class sales extends Model
                 ->orWhere("sales", "LIKE", "%$search%")
                 ->orWhere("yop", "LIKE", "%$search%")
                 ->orWhere("mop", "LIKE", "%$search%")
-                ->orWhere("distcode", "LIKE", "%$search%");
+                ->orWhere("distcode", "LIKE", "%$search%")
+                ->orWhere("distname", "LIKE", "%$search%");
         })
             ->select(
                 'id',
@@ -48,6 +49,7 @@ class sales extends Model
                 'yop',
                 'mop',
                 'distcode',
+                'distname',
             )
             ->offset($arr_pagination['offset'])
             ->limit($arr_pagination['limit'])

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('itemname');
             $table->integer('target');
             $table->string('distcode');
+            $table->string('distname');
             $table->timestamps();
             $table->softDeletes();
             $table->string('created_by');
