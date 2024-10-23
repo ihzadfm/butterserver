@@ -81,6 +81,8 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/vstargetsales', ['uses' => 'vstargetsalesController@paging']);
     $router->get('/bridgingtargetsales', ['uses' => 'bridgingtargetsalesController@paging']);
 
+    $router->get('/getsearchtargetsales/{distcode}/{brandcode}/{yop}/{mop}', ['uses' => 'targetpenjualanController@getsearch']);
+
     //sales
     $router->get('/sales', ['uses' => 'salesController@paging']);
     $router->post('/sales', ['uses' => 'salesController@store']); // Menyimpan data baru

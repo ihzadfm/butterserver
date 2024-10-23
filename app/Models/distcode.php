@@ -19,7 +19,22 @@ class distcode extends Model
     {
         return $date->format('Y-m-d H:i:s');
     }
+
+
     public function get_data_x($search, $arr_pagination)
+    {
+        if (!empty($search)) $arr_pagination['offset'] = 0;
+        // $search = strtolower($search);
+        // $data = DB::select("SELECT 'ALL', id, distcode, distname FROM distcode");
+        $data = DB::select("select a.* from (
+        select 2 as visorder, id, distcode, distname FROM distcode
+        union all select 1, 0,'ALL', 'ALL') as a
+        order by a.visorder, distcode, distname");
+
+        // $data = "SELECT id, distcode, distname FROM distcode WHERE distcode like '%" . $search . "%' OR distname like '%" . $search . "%'";
+        return $data;
+    }
+    public function get_data_search($search, $arr_pagination)
     {
         if (!empty($search)) $arr_pagination['offset'] = 0;
         // $search = strtolower($search);

@@ -19,6 +19,44 @@ class targetpenjualanController extends Controller
         $this->judul_halaman_notif = 'Target Penjualan';
     }
 
+    // targetpenjualanController.php
+
+public function searchData(Request $request)
+{
+    // Validasi input terlebih dahulu
+    $this->validate($request, [
+        'dist_name' => 'required|string',
+        'brand_code' => 'required|string',
+        'year' => 'required|numeric',
+        'month' => 'required|numeric|min:1|max:12',
+    ]);
+
+    // Mendapatkan nilai dari request
+    $dist_name = $request->input('dist_name');
+    $brand_code = $request->input('brand_code');
+    $year = $request->input('year');
+    $month = $request->input('month');
+
+    // Query untuk mendapatkan data
+    $results = DB::table('distcode')
+        ->join('masterbrand', 'distcode.brandcode', '=', 'masterbrand.brandcode')
+        ->select('distcode.*', 'masterbrand.brandname')
+        ->where('distcode.distname', 'like', '%' . $dist_name . '%')
+        ->where('distcode.brandcode', 'like', '%' . $brand_code . '%')
+        ->whereYear('distcode.created_at', $year)
+        ->whereMonth('distcode.created_at', $month)
+        ->get();
+
+    // Check apakah data ditemukan
+    if ($results->isEmpty()) {
+        return response()->json(['message' => 'Data not found'], 404);
+    }
+
+    // Mengembalikan data
+    return response()->json($results, 200);
+}
+
+
     public function deleteAll()
     {
         try {
@@ -45,6 +83,7 @@ class targetpenjualanController extends Controller
             ], 500);
         }
     }
+    
 
     public function paging(Request $request): JsonResponse
     {
@@ -65,6 +104,18 @@ class targetpenjualanController extends Controller
                 $request->search
             );
             $todos = (new targetpenjualan())->get_data_($request->search, $arr_pagination);
+            if($request->query('distcode')){
+                $todos->where('distcode','=',$request->query('distcode'));
+            }
+            if($request->query('brandcode')){
+                $todos->where('brandcode','=',$request->query('brandcode'));
+            }
+            if($request->query('yop')){
+                $todos->where('yop','=',$request->query('yop'));
+            }
+            if($request->query('mop')){
+                $todos->where('mop','=',$request->query('mop'));
+            }
             $count = $todos->count();
         }
 
@@ -73,6 +124,25 @@ class targetpenjualanController extends Controller
             200
         );
     }
+    public function getsearch(String $distcode, String $brandcode, String $yop, String $mop, Request $request): JsonResponse
+    {
+        $URL = URL::current();
+        if (!isset($request->$distcode, $brandcode, $yop, $mop,)) {
+            $URL =  URL::current();
+
+            // return $request;
+                $count = (new targetpenjualan())->count();
+                $arr_pagination = (new PublicModel())->pagination_without_search($URL, $request->limit, $request->offset);
+                $todos = (new targetpenjualan())->getsearch($distcode, $brandcode, $yop, $mop,$arr_pagination);
+                // print_r($todos); 
+    
+            return response()->json(
+                (new PublicModel())->array_respon_200_table($todos, $count, $arr_pagination),
+                200
+            );
+        }
+    }
+
 
     public function store(Request $req): JsonResponse
     {
