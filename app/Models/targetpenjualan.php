@@ -264,7 +264,7 @@ class targetpenjualan extends Model
         return $data;
     }
     
-    public function get_data_excelsuggestion($distcode, $brandcode, $yop, $term, $arr_pagination)
+    public function get_data_excelsuggestion($distcode, $brandcode, $term, $arr_pagination)
     {
 
         if ($distcode == 'ALL') {
@@ -275,9 +275,9 @@ class targetpenjualan extends Model
             $brandcode = '';
         }
 
-        if ($yop == 'ALL') {
-            $yop = '';
-        }
+        // if ($yop == 'ALL') {
+        //     $yop = '';
+        // }
 
         // if($mop == 'ALL'){
         //     $mop = '';
@@ -374,7 +374,6 @@ class targetpenjualan extends Model
         1 = 1 
         AND a.brandcode LIKE '%" . $brandcode . "%'
         AND a.distcode LIKE '%" . $distcode . "%'
-        AND CAST(a.yop AS TEXT) LIKE '%" . $yop . "%' 
         AND mop in ('1','2','3')
         GROUP BY 
         a.yop, 
@@ -384,7 +383,8 @@ class targetpenjualan extends Model
         a.brandcode, 
         a.brandname,
         a.kodebeban,
-        a.nowterm, a.nextterm) as ach");
+        a.nowterm, a.nextterm) as ach
+        LIMIT {$arr_pagination['limit']} OFFSET {$arr_pagination['offset']}");
         }
 
         if ($term == 2) {
@@ -479,7 +479,6 @@ class targetpenjualan extends Model
             1 = 1 
             AND a.brandcode LIKE '%" . $brandcode . "%'
             AND a.distcode LIKE '%" . $distcode . "%'
-            AND CAST(a.yop AS TEXT) LIKE '%" . $yop . "%' 
             AND mop in ('4','5','6')
             GROUP BY 
             a.yop, 
@@ -489,7 +488,8 @@ class targetpenjualan extends Model
             a.brandcode, 
             a.brandname,
             a.kodebeban,
-            a.nowterm, a.nextterm) as ach");
+            a.nowterm, a.nextterm) as ach
+            LIMIT {$arr_pagination['limit']} OFFSET {$arr_pagination['offset']}");
         }
 
         if ($term == 3) {
@@ -584,7 +584,6 @@ class targetpenjualan extends Model
                 1 = 1 
                 AND a.brandcode LIKE '%" . $brandcode . "%'
                 AND a.distcode LIKE '%" . $distcode . "%'
-                AND CAST(a.yop AS TEXT) LIKE '%" . $yop . "%' 
                 AND mop in ('7','8','9')
                 GROUP BY 
                 a.yop, 
@@ -594,7 +593,8 @@ class targetpenjualan extends Model
                 a.brandcode, 
                 a.brandname,
                 a.kodebeban,
-                a.nowterm, a.nextterm) as ach");
+                a.nowterm, a.nextterm) as ach
+                LIMIT {$arr_pagination['limit']} OFFSET {$arr_pagination['offset']}");
         }
 
         return $data;
@@ -932,7 +932,7 @@ class targetpenjualan extends Model
         return $data;
     }
 
-    public function get_data_updatebudget($kodebeban, $term)
+    public function get_data_updatebudget($kodebeban, $term, $arr_pagination)
     {
         // if (!empty($search)) $arr_pagination['offset'] = 0;
         // $search = strtolower($search);
@@ -1040,7 +1040,8 @@ class targetpenjualan extends Model
         a.brandcode, 
         a.brandname,
         a.kodebeban,
-        a.nowterm, a.nextterm) as ach");
+        a.nowterm, a.nextterm) as ach
+        LIMIT {$arr_pagination['limit']} OFFSET {$arr_pagination['offset']}");
         }
 
 
@@ -1144,7 +1145,8 @@ class targetpenjualan extends Model
             a.brandcode, 
             a.brandname,
             a.kodebeban,
-            a.nowterm, a.nextterm) as ach");
+            a.nowterm, a.nextterm) as ach
+            LIMIT {$arr_pagination['limit']} OFFSET {$arr_pagination['offset']}");
         }
 
         if ($term == 3) {
@@ -1247,7 +1249,8 @@ class targetpenjualan extends Model
                 a.brandcode, 
                 a.brandname,
                 a.kodebeban,
-                a.nowterm, a.nextterm) as ach");
+                a.nowterm, a.nextterm) as ach
+                LIMIT {$arr_pagination['limit']} OFFSET {$arr_pagination['offset']}");
         }
 
         return $data;

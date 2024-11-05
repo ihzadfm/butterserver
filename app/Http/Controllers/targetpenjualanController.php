@@ -209,14 +209,14 @@ class targetpenjualanController extends Controller
         }
     }
 
-    public function update(Request $req, String $kodebeban, String $term)
+    public function update(Request $req, String $kodebeban, String $term, $arr_pagination)
     {
         DB::beginTransaction();
         $user_id = 'USER TEST';
         $data = $this->validate($req, []);
 
         try {
-            $target = (new targetpenjualan)->get_data_updatebudget($kodebeban, $term);
+            $target = (new targetpenjualan)->get_data_updatebudget($kodebeban, $term , $arr_pagination);
             // $target->fill($data)->save();
 
             $budgetafterb = $target[0]->budgetafterb;
@@ -258,14 +258,14 @@ class targetpenjualanController extends Controller
             ], 409);
         }
     }
-    public function updatea(Request $req, String $kodebeban, String $term)
+    public function updatea(Request $req, String $kodebeban, String $term, $arr_pagination)
     {
         DB::beginTransaction();
         $user_id = 'USER TEST';
         $data = $this->validate($req, []);
 
         try {
-            $target = (new targetpenjualan)->get_data_updatebudget($kodebeban, $term);
+            $target = (new targetpenjualan)->get_data_updatebudget($kodebeban, $term, $arr_pagination);
             // $target->fill($data)->save();
 
             $budgetaftera = $target[0]->budgetaftera;

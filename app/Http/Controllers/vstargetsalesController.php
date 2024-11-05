@@ -61,14 +61,16 @@ class vstargetsalesController extends Controller
             200
         );
     }
-    public function excelsuggestion(String $distcode, String $brandcode, String $yop, String $term, Request $request): JsonResponse
+    public function excelsuggestion(String $distcode, String $brandcode, String $term, Request $request): JsonResponse
     {
         $URL =  URL::current();
 
         // return $request;
-        $count = (new targetpenjualan())->count();
+        // $count = (new targetpenjualan())->count();
         $arr_pagination = (new PublicModel())->pagination_without_search($URL, $request->limit, $request->offset);
-        $todos = (new targetpenjualan())->get_data_excelsuggestion($distcode, $brandcode, $yop, $term, $arr_pagination);
+        $todos = (new targetpenjualan())->get_data_excelsuggestion($distcode, $brandcode, $term, $arr_pagination);
+        $count = count($todos);
+       
         // print_r($todos); 
 
         return response()->json(
@@ -77,4 +79,3 @@ class vstargetsalesController extends Controller
         );
     }
 }
-
