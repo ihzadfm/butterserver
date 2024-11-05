@@ -68,11 +68,13 @@ class distcode extends Model
         // $search = strtolower($search);
         // $data = DB::select("SELECT 'ALL', id, distcode, distname FROM distcode");
 
-        $data = DB::select("SELECT EXTRACT(YEAR FROM CURRENT_DATE) - 1 AS year
-                            UNION ALL
-                            SELECT EXTRACT(YEAR FROM CURRENT_DATE) AS year
-                            UNION ALL
-                            SELECT EXTRACT(YEAR FROM CURRENT_DATE) + 1 AS year;");
+        $data = DB::select("SELECT 'ALL' AS year, 1 AS visorder
+UNION ALL
+SELECT (EXTRACT(YEAR FROM CURRENT_DATE) - 1)::text AS year, 2 AS visorder
+UNION ALL
+SELECT EXTRACT(YEAR FROM CURRENT_DATE)::text AS year, 2 AS visorder
+UNION ALL
+SELECT (EXTRACT(YEAR FROM CURRENT_DATE) + 1)::text AS year, 2 AS visorder;");
 
         // $data = "SELECT id, distcode, distname FROM distcode WHERE distcode like '%" . $search . "%' OR distname like '%" . $search . "%'";
         return $data;
@@ -84,7 +86,20 @@ class distcode extends Model
         // $search = strtolower($search);
         // $data = DB::select("SELECT 'ALL', id, distcode, distname FROM distcode");
 
-        $data = DB::select("SELECT generate_series(1, 12) AS month;");
+        $data = DB::select("SELECT 'ALL' as month, 1 as visorder
+        union ALL
+        SELECT generate_series(1, 12)::text AS month, 2 as visorder;");
+
+        // $data = "SELECT id, distcode, distname FROM distcode WHERE distcode like '%" . $search . "%' OR distname like '%" . $search . "%'";
+        return $data;
+    }
+    public function get_data_term($search, $arr_pagination)
+    {
+        if (!empty($search)) $arr_pagination['offset'] = 0;
+        // $search = strtolower($search);
+        // $data = DB::select("SELECT 'ALL', id, distcode, distname FROM distcode");
+
+        $data = DB::select("SELECT generate_series(1, 3)::text AS term;");
 
         // $data = "SELECT id, distcode, distname FROM distcode WHERE distcode like '%" . $search . "%' OR distname like '%" . $search . "%'";
         return $data;

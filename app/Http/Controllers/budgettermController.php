@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Http\JsonResponse;
 use App\Models\BudgetMonitoring;
+use App\Models\budgetterm;
 use App\Models\PublicModel;
 
 class budgettermController extends Controller
@@ -17,6 +18,13 @@ class budgettermController extends Controller
     {
         $this->judul_halaman_notif = 'BUDGET TERM';
     }
+
+    public function getBudgetTermData()
+    {
+        $data = budgetterm::all(); // Ambil semua data dari tabel budgetterm
+        return response()->json($data);
+    }
+
 
     public function paging(Request $request): JsonResponse
     {
@@ -46,4 +54,3 @@ class budgettermController extends Controller
         );
     }
 }
-

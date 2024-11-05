@@ -74,14 +74,25 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/targetpenjualan', ['uses' => 'targetpenjualanController@paging']);
     $router->post('/targetpenjualan', ['uses' => 'targetpenjualanController@store']); // Menyimpan data baru
     $router->get('/targetpenjualan/{id}', ['uses' => 'targetpenjualanController@show']); // Menampilkan detail data berdasarkan ID
-    $router->put('/targetpenjualan/{id}', ['uses' => 'targetpenjualanController@update']); // Memperbarui data berdasarkan ID
+    //kak mario
+    // $router->put('/targetpenjualan/{id}', ['uses' => 'targetpenjualanController@update']); // Memperbarui data berdasarkan ID
     $router->delete('/targetpenjualan/{id}', ['uses' => 'targetpenjualanController@destroy']);
     $router->delete('/targetpenjualandelete', ['uses' => 'targetpenjualanController@deleteAll']);
     $router->post('/targetpenjualanBulky', ['uses' => 'targetpenjualanController@storeBulky']);
+    $router->get('/suggestion', ['uses' => 'distcodeController@pagingterm']);
+    $router->get('/vstargetsalesuggestion', ['uses' => 'vstargetsalesController@paging']);
     $router->get('/vstargetsales', ['uses' => 'vstargetsalesController@paging']);
     $router->get('/bridgingtargetsales', ['uses' => 'bridgingtargetsalesController@paging']);
 
-    $router->get('/getsearchtargetsales/{distcode}/{brandcode}/{yop}/{mop}', ['uses' => 'targetpenjualanController@getsearch']);
+    //kak mario
+    $router->get('/vstargetsalesmario/{distcode}/{brandcode}/{yop}/{mop}', ['uses' => 'vstargetsalesController@excelmario']);
+    $router->get('/excelsuggestion/{distcode}/{brandcode}/{term}', ['uses' => 'vstargetsalesController@excelsuggestion']);
+    $router->put('/putbudgetafter/{kodebeban}/{term}', ['uses' => 'targetpenjualanController@update']);
+    $router->put('/putbudgetaftera/{kodebeban}/{term}', ['uses' => 'targetpenjualanController@updatea']);
+
+    $router->get('/targetpenjualanparam/{distcode}/{brandcode}/{yop}/{mop}', ['uses' => 'targetpenjualanController@showdatabyparameter']);
+    $router->put('/updatebudget/{kodebeban}/{term}', ['uses' => 'targetpenjualanController@updatebudget']);
+    $router->get('/suggestionparam/{distcode}/{brandcode}/{term}', ['uses' => 'targetpenjualanController@showsuggestionbyparameter']);
 
     //sales
     $router->get('/sales', ['uses' => 'salesController@paging']);
@@ -96,16 +107,12 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
 
     $router->get('/budgetterm', ['uses' => 'budgettermController@paging']);
+    
+
 
     $router->get('/getdistcodeall', ['uses' => 'distcodeController@paging']);
     $router->get('/getdistcodeallbrand', ['uses' => 'distcodeController@pagingbrand']);
     $router->get('/getdistcodeallyear', ['uses' => 'distcodeController@pagingyear']);
     $router->get('/getdistcodeallmonth', ['uses' => 'distcodeController@pagingmonth']);
 
-    // $router->get('/bridgingbrand', ['uses' => 'masterbridgingbrandController@paging']);
-    // $router->post('/bridgingbrand', ['uses' => 'masterbridgingbrandController@store']); // Menyimpan data baru
-    // $router->get('/bridgingbrand/{id}', ['uses' => 'masterbridgingbrandController@show']); // Menampilkan detail data berdasarkan ID
-    // $router->put('/bridgingbrand/{id}', ['uses' => 'masterbridgingbrandController@update']); // Memperbarui data berdasarkan ID
-    // $router->delete('/bridgingbrand/{id}', ['uses' => 'masterbridgingbrandController@destroy']);
-    // $router->post('/bridgingbudgetbrandBulky', ['uses' => 'masterbridgingbrandController@storeBulky']);
 });

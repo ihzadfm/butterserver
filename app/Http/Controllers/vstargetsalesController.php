@@ -45,5 +45,36 @@ class vstargetsalesController extends Controller
             200
         );
     }
+
+    public function excelmario(String $distcode, String $brandcode, String $yop, String $mop, Request $request): JsonResponse
+    {
+        $URL =  URL::current();
+
+        // return $request;
+        $count = (new targetpenjualan())->count();
+        $arr_pagination = (new PublicModel())->pagination_without_search($URL, $request->limit, $request->offset);
+        $todos = (new targetpenjualan())->get_data_excelmario($distcode, $brandcode, $yop, $mop, $arr_pagination);
+        // print_r($todos); 
+
+        return response()->json(
+            (new PublicModel())->array_respon_200_table($todos, $count, $arr_pagination),
+            200
+        );
+    }
+    public function excelsuggestion(String $distcode, String $brandcode, String $yop, String $term, Request $request): JsonResponse
+    {
+        $URL =  URL::current();
+
+        // return $request;
+        $count = (new targetpenjualan())->count();
+        $arr_pagination = (new PublicModel())->pagination_without_search($URL, $request->limit, $request->offset);
+        $todos = (new targetpenjualan())->get_data_excelsuggestion($distcode, $brandcode, $yop, $term, $arr_pagination);
+        // print_r($todos); 
+
+        return response()->json(
+            (new PublicModel())->array_respon_200_table($todos, $count, $arr_pagination),
+            200
+        );
+    }
 }
 

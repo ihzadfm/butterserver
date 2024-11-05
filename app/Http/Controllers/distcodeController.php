@@ -54,7 +54,6 @@ class distcodeController extends Controller
             );
             $todos = (new distcode())->get_data_x($request->search, $arr_pagination);
             $count = count($todos);
-
         }
 
         return response()->json(
@@ -83,7 +82,6 @@ class distcodeController extends Controller
             );
             $todos = (new distcode())->get_data_brand($request->search, $arr_pagination);
             $count = count($todos);
-
         }
 
         return response()->json(
@@ -112,7 +110,6 @@ class distcodeController extends Controller
             );
             $todos = (new distcode())->get_data_year($request->search, $arr_pagination);
             $count = count($todos);
-
         }
 
         return response()->json(
@@ -141,7 +138,33 @@ class distcodeController extends Controller
             );
             $todos = (new distcode())->get_data_month($request->search, $arr_pagination);
             $count = count($todos);
+        }
 
+        return response()->json(
+            (new PublicModel())->array_respon_200_table($todos, $count, $arr_pagination),
+            200
+        );
+    }
+    public function pagingterm(Request $request): JsonResponse
+    {
+        $URL = URL::current();
+        if (!isset($request->search)) {
+            $count = (new distcode())->count();
+            $arr_pagination = (new PublicModel())->pagination_without_search(
+                $URL,
+                $request->limit,
+                $request->offset
+            );
+            $todos = (new distcode())->get_data_term($request->search, $arr_pagination);
+        } else {
+            $arr_pagination = (new PublicModel())->pagination_without_search(
+                $URL,
+                $request->limit,
+                $request->offset,
+                $request->search
+            );
+            $todos = (new distcode())->get_data_term($request->search, $arr_pagination);
+            $count = count($todos);
         }
 
         return response()->json(

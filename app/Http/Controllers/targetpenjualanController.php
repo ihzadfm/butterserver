@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
 use App\Models\targetpenjualan;
 use App\Models\PublicModel;
+use App\Models\BudgetMonitoring;
 
 class targetpenjualanController extends Controller
 {
@@ -18,44 +19,6 @@ class targetpenjualanController extends Controller
     {
         $this->judul_halaman_notif = 'Target Penjualan';
     }
-
-    // targetpenjualanController.php
-
-public function searchData(Request $request)
-{
-    // Validasi input terlebih dahulu
-    $this->validate($request, [
-        'dist_name' => 'required|string',
-        'brand_code' => 'required|string',
-        'year' => 'required|numeric',
-        'month' => 'required|numeric|min:1|max:12',
-    ]);
-
-    // Mendapatkan nilai dari request
-    $dist_name = $request->input('dist_name');
-    $brand_code = $request->input('brand_code');
-    $year = $request->input('year');
-    $month = $request->input('month');
-
-    // Query untuk mendapatkan data
-    $results = DB::table('distcode')
-        ->join('masterbrand', 'distcode.brandcode', '=', 'masterbrand.brandcode')
-        ->select('distcode.*', 'masterbrand.brandname')
-        ->where('distcode.distname', 'like', '%' . $dist_name . '%')
-        ->where('distcode.brandcode', 'like', '%' . $brand_code . '%')
-        ->whereYear('distcode.created_at', $year)
-        ->whereMonth('distcode.created_at', $month)
-        ->get();
-
-    // Check apakah data ditemukan
-    if ($results->isEmpty()) {
-        return response()->json(['message' => 'Data not found'], 404);
-    }
-
-    // Mengembalikan data
-    return response()->json($results, 200);
-}
-
 
     public function deleteAll()
     {
@@ -83,7 +46,6 @@ public function searchData(Request $request)
             ], 500);
         }
     }
-    
 
     public function paging(Request $request): JsonResponse
     {
@@ -104,18 +66,6 @@ public function searchData(Request $request)
                 $request->search
             );
             $todos = (new targetpenjualan())->get_data_($request->search, $arr_pagination);
-            if($request->query('distcode')){
-                $todos->where('distcode','=',$request->query('distcode'));
-            }
-            if($request->query('brandcode')){
-                $todos->where('brandcode','=',$request->query('brandcode'));
-            }
-            if($request->query('yop')){
-                $todos->where('yop','=',$request->query('yop'));
-            }
-            if($request->query('mop')){
-                $todos->where('mop','=',$request->query('mop'));
-            }
             $count = $todos->count();
         }
 
@@ -124,25 +74,60 @@ public function searchData(Request $request)
             200
         );
     }
-    public function getsearch(String $distcode, String $brandcode, String $yop, String $mop, Request $request): JsonResponse
-    {
-        $URL = URL::current();
-        if (!isset($request->$distcode, $brandcode, $yop, $mop,)) {
-            $URL =  URL::current();
 
-            // return $request;
-                $count = (new targetpenjualan())->count();
-                $arr_pagination = (new PublicModel())->pagination_without_search($URL, $request->limit, $request->offset);
-                $todos = (new targetpenjualan())->getsearch($distcode, $brandcode, $yop, $mop,$arr_pagination);
-                // print_r($todos); 
-    
-            return response()->json(
-                (new PublicModel())->array_respon_200_table($todos, $count, $arr_pagination),
-                200
-            );
-        }
+    public function showdatabyparameter(String $distcode, String $brandcode, String $yop, String $mop, Request $request): JsonResponse
+    {
+        $URL =  URL::current();
+
+        // return $request;
+        $count = (new targetpenjualan())->count();
+        $arr_pagination = (new PublicModel())->pagination_without_search($URL, $request->limit, $request->offset);
+        $todos = (new targetpenjualan())->get_data_param($distcode, $brandcode, $yop, $mop, $arr_pagination);
+        // print_r($todos); 
+
+        return response()->json(
+            (new PublicModel())->array_respon_200_table($todos, $count, $arr_pagination),
+            200
+        );
+    }
+    public function showsuggestionbyparameter(String $distcode, String $brandcode, String $term, Request $request): JsonResponse
+    {
+        $URL =  URL::current();
+
+        // return $request;
+        $count = (new targetpenjualan())->count();
+        $arr_pagination = (new PublicModel())->pagination_without_search($URL, $request->limit, $request->offset);
+        $todos = (new targetpenjualan())->get_data_z($distcode, $brandcode, $term, $arr_pagination);
+        // print_r($todos); 
+
+        return response()->json(
+            (new PublicModel())->array_respon_200_table($todos, $count, $arr_pagination),
+            200
+        );
     }
 
+    public function updatebudget(String $kodebeban, $term, Request $request): JsonResponse
+    {
+        $URL =  URL::current();
+
+        // return $request;
+        $count = (new targetpenjualan())->count();
+        $arr_pagination = (new PublicModel())->pagination_without_search($URL, $request->limit, $request->offset);
+        $todos = (new targetpenjualan())->get_data_updatebudget($kodebeban, $term, $arr_pagination);
+        // print_r($todos); 
+        // foreach($todos as $key => $value) {
+        //     $todos['aftera'] = $value->budgetaftera;
+        //     $todos['afterb'] = $value->budgetafterb;
+        // }
+
+        // $update = 'UPDATE budget_monitorings set apr='$todos['aftera'], 
+        // mei=0,jun=0 where kodebeban = $kodebeban';
+
+        return response()->json(
+            (new PublicModel())->array_respon_200_table($todos, $count, $arr_pagination),
+            200
+        );
+    }
 
     public function store(Request $req): JsonResponse
     {
@@ -224,27 +209,90 @@ public function searchData(Request $request)
         }
     }
 
-    public function update(Request $req, int $id)
+    public function update(Request $req, String $kodebeban, String $term)
     {
         DB::beginTransaction();
         $user_id = 'USER TEST';
-        $data = $this->validate($req, [
-            'brandcode' => 'required',
-            'brandname' => 'required',
-            'itemname' => 'required',
-            'itemcode' => 'required',
-            'target' => 'required',
-            'yop' => 'required',
-            'mop' => 'required',
-        ]);
+        $data = $this->validate($req, []);
 
         try {
-            $target = targetpenjualan::findOrFail($id);
-            $target->fill($data)->save();
+            $target = (new targetpenjualan)->get_data_updatebudget($kodebeban, $term);
+            // $target->fill($data)->save();
 
-            targetpenjualan::where('id', $id)->update([
-                'updated_by' => $user_id,
-            ]);
+            $budgetafterb = $target[0]->budgetafterb;
+
+
+            if ($term == 1) {
+                BudgetMonitoring::where('kodebeban', $kodebeban)->update([
+                    'apr' => $budgetafterb,
+                    'mei' => 0,
+                    'jun' => 0,
+                ]);
+            } else if ($term == 2) {
+                BudgetMonitoring::where('kodebeban', $kodebeban)->update([
+                    'jul' => $budgetafterb,
+                    'ags' => 0,
+                    'sep' => 0,
+                ]);
+            } else if ($term == 3) {
+                BudgetMonitoring::where('kodebeban', $kodebeban)->update([
+                    'okt' => $budgetafterb,
+                    'nop' => 0,
+                    'des' => 0,
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'code' => 201,
+                'status' => true,
+                'message' => 'Updated successfully',
+                'data' => $target
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'code' => 409,
+                'status' => false,
+                'message' => 'Failed to update data',
+            ], 409);
+        }
+    }
+    public function updatea(Request $req, String $kodebeban, String $term)
+    {
+        DB::beginTransaction();
+        $user_id = 'USER TEST';
+        $data = $this->validate($req, []);
+
+        try {
+            $target = (new targetpenjualan)->get_data_updatebudget($kodebeban, $term);
+            // $target->fill($data)->save();
+
+            $budgetaftera = $target[0]->budgetaftera;
+
+            // masterbrand::where('id', $id)->update([
+            //     'updated_by' => $user_id,
+            // ]);
+
+            if ($term == 1) {
+                BudgetMonitoring::where('kodebeban', $kodebeban)->update([
+                    'apr' => $budgetaftera,
+                    'mei' => 0,
+                    'jun' => 0,
+                ]);
+            } else if ($term == 2) {
+                BudgetMonitoring::where('kodebeban', $kodebeban)->update([
+                    'jul' => $budgetaftera,
+                    'ags' => 0,
+                    'sep' => 0,
+                ]);
+            } else if ($term == 3) {
+                BudgetMonitoring::where('kodebeban', $kodebeban)->update([
+                    'okt' => $budgetaftera,
+                    'nop' => 0,
+                    'des' => 0,
+                ]);
+            }
 
             DB::commit();
             return response()->json([
