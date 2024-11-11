@@ -70,6 +70,15 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->delete('/masterproductdelete', ['uses' => 'masterproductController@deleteAll']);
     $router->post('/masterproductBulky', ['uses' => 'masterproductController@storeBulky']);
 
+    //accrued
+    $router->get('/accrued', ['uses' => 'accruedController@paging']);
+    $router->post('/accrued', ['uses' => 'accruedController@store']); // Menyimpan data baru
+    $router->get('/accrued/{id}', ['uses' => 'accruedController@show']); // Menampilkan detail data berdasarkan ID
+    $router->put('/accrued/{id}', ['uses' => 'accruedController@update']); // Memperbarui data berdasarkan ID
+    $router->delete('/accrued/{id}', ['uses' => 'accruedController@destroy']);
+    $router->delete('/accrueddelete', ['uses' => 'accruedController@deleteAll']);
+    $router->post('/accruedBulky', ['uses' => 'accruedController@storeBulky']);
+
     //targetpenjualan
     $router->get('/targetpenjualan', ['uses' => 'targetpenjualanController@paging']);
     $router->post('/targetpenjualan', ['uses' => 'targetpenjualanController@store']); // Menyimpan data baru
