@@ -70,6 +70,17 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->delete('/masterproductdelete', ['uses' => 'masterproductController@deleteAll']);
     $router->post('/masterproductBulky', ['uses' => 'masterproductController@storeBulky']);
 
+    //masterpenampung
+    $router->get('/penampung', ['uses' => 'penampungController@paging']);
+    $router->post('/penampung', ['uses' => 'penampungController@store']); // Menyimpan data baru
+    $router->get('/penampung/{id}', ['uses' => 'penampungController@show']); // Menampilkan detail data berdasarkan ID
+    $router->put('/penampung/{id}', ['uses' => 'penampungController@update']); // Memperbarui data berdasarkan ID
+    $router->delete('/penampung/{id}', ['uses' => 'penampungController@destroy']);
+    $router->delete('/penampungdelete', ['uses' => 'penampungController@deleteAll']);
+    $router->post('/penampungBulky', ['uses' => 'penampungController@storeBulky']);
+    $router->post('/insertrealizationterm', ['uses' => 'penampungController@insertrealizationterm']);
+
+
     //accrued
     $router->get('/accrued', ['uses' => 'accruedController@paging']);
     $router->post('/accrued', ['uses' => 'accruedController@store']); // Menyimpan data baru
@@ -101,7 +112,11 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
     $router->get('/targetpenjualanparam/{distcode}/{brandcode}/{yop}/{mop}', ['uses' => 'targetpenjualanController@showdatabyparameter']);
     $router->put('/updatebudget/{kodebeban}/{term}', ['uses' => 'targetpenjualanController@updatebudget']);
+    $router->put('/updatepenampungq1/{kodebeban}/{term}', ['uses' => 'targetpenjualanController@updatepenampungq1']);
+    $router->put('/updatepenampungq2/{kodebeban}/{term}', ['uses' => 'targetpenjualanController@updatepenampungq2']);
+    $router->put('/updatepenampungq3/{kodebeban}/{term}', ['uses' => 'targetpenjualanController@updatepenampungq3']);
     $router->get('/suggestionparam/{distcode}/{brandcode}/{term}', ['uses' => 'targetpenjualanController@showsuggestionbyparameter']);
+    $router->get('/suggestionpenampung/{distcode}/{brandcode}/{term}', ['uses' => 'targetpenjualanController@showsuggestionpenampung']);
 
     //sales
     $router->get('/sales', ['uses' => 'salesController@paging']);
@@ -116,6 +131,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
 
     $router->get('/budgetterm', ['uses' => 'budgettermController@paging']);
+    $router->get('/accruedterm', ['uses' => 'accruedtermController@paging']);
     
 
 

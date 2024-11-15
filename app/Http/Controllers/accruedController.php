@@ -77,7 +77,7 @@ class accruedController extends Controller
         $data = $this->validate($req, [
             'no_pp' => 'required',
             'id_detail' => 'required|integer',
-            'kode_beban' => 'required',
+            'kodebeban' => 'required',
             'nilai_pp' => 'required|numeric',
             'bulan' => 'required|integer',
             'tahun' => 'required|integer',
@@ -170,7 +170,7 @@ class accruedController extends Controller
         $user_id = 'USER TEST';
         $data = $this->validate($req, [
             'no_pp' => 'required',
-            'kode_beban' => 'required',
+            'kodebeban' => 'required',
             'id_detail' => 'required|integer',
             'nilai_pp' => 'required|numeric',
             'bulan' => 'required|integer',

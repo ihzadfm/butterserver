@@ -51,42 +51,86 @@ WHERE
     deleted_by IS NULL;");
         return $data;
     }
-    
+
+    public function get_data_accrued($search, $arr_pagination)
+    {
+        if (!empty($search)) $arr_pagination['offset'] = 0;
+
+        $data = DB::connection('pgsql')->select("
+            SELECT 
+                bt.kodebeban,
+                bt.q1,
+                bt.realizationq1,
+                COALESCE(SUM(a.nilai_realisasi) FILTER (WHERE a.bulan IN (1, 2, 3)), 0) AS accrued_q1, -- Accrued Q1
+                (bt.q1-bt.realizationq1) outstandingbudgetrealisasiq1,
+                (bt.q1-(COALESCE(SUM(a.nilai_realisasi) FILTER (WHERE a.bulan IN (1, 2, 3)), 0))) outstandingbudgetaccruedq1,
+                bt.q2,
+                bt.realizationq2,
+                COALESCE(SUM(a.nilai_realisasi) FILTER (WHERE a.bulan IN (4, 5, 6)), 0) AS accrued_q2, -- Accrued Q2
+                (bt.q2-bt.realizationq2) outstandingbudgetrealisasiq2,
+                (bt.q2-(COALESCE(SUM(a.nilai_realisasi) FILTER (WHERE a.bulan IN (4, 5, 6)), 0))) outstandingbudgetaccruedq2,
+                bt.q3,
+                bt.realizationq3,
+                COALESCE(SUM(a.nilai_realisasi) FILTER (WHERE a.bulan IN (7, 8, 9)), 0) AS accrued_q3, -- Accrued Q3
+                (bt.q3-bt.realizationq3) outstandingbudgetrealisasiq3,
+                (bt.q3-(COALESCE(SUM(a.nilai_realisasi) FILTER (WHERE a.bulan IN (7, 8, 9)), 0))) outstandingbudgetaccruedq3,
+                bt.q4,
+                bt.realizationq4,
+                COALESCE(SUM(a.nilai_realisasi) FILTER (WHERE a.bulan IN (10, 11, 12)), 0) AS accrued_q4, -- Accrued Q4
+                (bt.q4-bt.realizationq4) outstandingbudgetrealisasiq4,
+                (bt.q4-(COALESCE(SUM(a.nilai_realisasi) FILTER (WHERE a.bulan IN (10, 11, 12)), 0))) outstandingbudgetaccruedq4,
+                bt.created_at,
+                bt.updated_at
+            FROM 
+                budgetterm bt
+            LEFT JOIN 
+                accrued a ON bt.kodebeban = a.kodebeban
+            GROUP BY 
+                bt.kodebeban, bt.q1, bt.realizationq1, bt.q2, bt.realizationq2, bt.q3, bt.realizationq3, bt.q4, bt.realizationq4, bt.created_at, bt.updated_at
+            ORDER BY 
+                bt.kodebeban
+            OFFSET ? LIMIT ?
+        ", [$arr_pagination['offset'], $arr_pagination['limit']]);
+
+        return $data;
+    }
+
+
     public function get_data_($search, $arr_pagination)
     {
         if (!empty($search)) $arr_pagination['offset'] = 0;
         $search = strtolower($search);
-        
+
         $data = BudgetTerm::where(function ($query) use ($search) {
             $query->whereRaw("LOWER(\"kodebeban\") LIKE ?", ["%$search%"])
-                  ->orWhereRaw("LOWER(\"q1\") LIKE ?", ["%$search%"])
-                  ->orWhereRaw("LOWER(\"q2\") LIKE ?", ["%$search%"])
-                  ->orWhereRaw("LOWER(\"q3\") LIKE ?", ["%$search%"])
-                  ->orWhereRaw("LOWER(\"q4\") LIKE ?", ["%$search%"])
-                  ->orWhereRaw("LOWER(\"realizationq1\") LIKE ?", ["%$search%"])
-                  ->orWhereRaw("LOWER(\"realizationq2\") LIKE ?", ["%$search%"])
-                  ->orWhereRaw("LOWER(\"realizationq3\") LIKE ?", ["%$search%"])
-                  ->orWhereRaw("LOWER(\"realizationq4\") LIKE ?", ["%$search%"]);
+                ->orWhereRaw("LOWER(\"q1\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"q2\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"q3\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"q4\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"realizationq1\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"realizationq2\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"realizationq3\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"realizationq4\") LIKE ?", ["%$search%"]);
         })
-        ->whereNull('deleted_by')
-        ->select(
-            'id',
-            'kodebeban',
-            'q1',
-            'q2',
-            'q3',
-            'q4',
-            'realizationq1',
-            'realizationq2',
-            'realizationq3',
-            'realizationq4',
-            'created_at',
-            'updated_at'
-        )
-        ->offset($arr_pagination['offset'])
-        ->limit($arr_pagination['limit'])
-        ->orderBy('id', 'ASC')
-        ->get();
+            ->whereNull('deleted_by')
+            ->select(
+                'id',
+                'kodebeban',
+                'q1',
+                'q2',
+                'q3',
+                'q4',
+                'realizationq1',
+                'realizationq2',
+                'realizationq3',
+                'realizationq4',
+                'created_at',
+                'updated_at'
+            )
+            ->offset($arr_pagination['offset'])
+            ->limit($arr_pagination['limit'])
+            ->orderBy('id', 'ASC')
+            ->get();
 
         return $data;
     }

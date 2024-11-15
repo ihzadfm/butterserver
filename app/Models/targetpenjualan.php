@@ -213,7 +213,7 @@ class targetpenjualan extends Model
             $yop = '';
         }
 
-        if($mop == 'ALL'){
+        if ($mop == 'ALL') {
             $mop = '';
         }
 
@@ -263,7 +263,7 @@ class targetpenjualan extends Model
 
         return $data;
     }
-    
+
     public function get_data_excelsuggestion($distcode, $brandcode, $term, $arr_pagination)
     {
 
@@ -932,14 +932,337 @@ class targetpenjualan extends Model
         return $data;
     }
 
-    public function get_data_updatebudget($kodebeban, $term, $arr_pagination)
+    public function get_data_penampung($distcode, $brandcode, $term, $arr_pagination)
     {
-        // if (!empty($search)) $arr_pagination['offset'] = 0;
-        // $search = strtolower($search);
+
+        if ($distcode == 'ALL') {
+            $distcode = '';
+        }
+        if ($brandcode == 'ALL') {
+            $brandcode = '';
+        }
+        // if ($yop == 'ALL') {
+        //     $yop = '';
+        // }
 
         // if($mop == 'ALL'){
         //     $mop = '';
         // }
+        if ($term == 1) {
+            $data = DB::select("
+        SELECT  1 term,
+        ROUND(((nextterm * (achievement / 100)) - bt.realizationq1), 0) AS budgetafterq1,
+        ach.* 
+        FROM (SELECT 
+        a.yop, 
+        a.mop, 
+        a.distcode, 
+        a.distname, 
+        a.brandcode, 
+        a.brandname, 
+        a.kodebeban,
+        nowterm,
+        nextterm,
+        SUM(a.sales) as sales, 
+        SUM(a.target) as target, 
+        CASE
+            WHEN ROUND((SUM(a.sales) / SUM(a.target)) * 100, 2) > 100 THEN 100
+            ELSE ROUND((SUM(a.sales) / SUM(a.target)) * 100, 2)
+        END AS achievement
+    FROM (
+        SELECT 
+            s.yop, 
+            s.mop, 
+            s.distcode, 
+            s.distname, 
+            s.brandcode, 
+            s.brandname, 
+            SUM(sales) as sales, 
+            0 as target,
+            mbb.kodebeban,
+            (CAST(bm.jan AS NUMERIC) + CAST(bm.feb AS NUMERIC) + CAST(bm.mar AS NUMERIC)) AS nowterm,
+            (CAST(bm.apr AS NUMERIC) + CAST(bm.mei AS NUMERIC) + CAST(bm.jun AS NUMERIC)) AS nextterm
+        FROM 
+            sales s
+        INNER JOIN m_bridging_budget mbb ON s.itemcode = mbb.itemcode
+        INNER JOIN budget_monitorings bm ON bm.kodebeban = mbb.kodebeban 
+        GROUP BY 
+            s.yop, 
+            s.mop, 
+            s.distcode, 
+            s.distname, 
+            s.brandcode, 
+            s.brandname,
+            mbb.kodebeban,
+            bm.jan,
+            bm.feb,
+            bm.mar,
+            bm.apr,
+            bm.mei,
+            bm.jun
+        UNION ALL 
+        SELECT 
+            tp.yop, 
+            tp.mop, 
+            tp.distcode, 
+            tp.distname, 
+            tp.brandcode, 
+            tp.brandname, 
+            0 as sales, 
+            SUM(target) as target,
+            mbb.kodebeban,
+            (CAST(bm.jan AS NUMERIC) + CAST(bm.feb AS NUMERIC) + CAST(bm.mar AS NUMERIC)) AS nowterm,
+            (CAST(bm.apr AS NUMERIC) + CAST(bm.mei AS NUMERIC) + CAST(bm.jun AS NUMERIC)) AS nextterm
+        FROM 
+            targetpenjualan tp
+        INNER JOIN m_bridging_budget mbb ON tp.itemcode = mbb.itemcode
+        INNER JOIN budget_monitorings bm ON bm.kodebeban = mbb.kodebeban 
+        GROUP BY 
+            tp.yop, 
+            tp.mop, 
+            tp.distcode, 
+            tp.distname, 
+            tp.brandcode, 
+            tp.brandname,
+            mbb.kodebeban,
+            bm.jan,
+            bm.feb,
+            bm.mar,
+            bm.apr,
+            bm.mei,
+            bm.jun
+    ) AS a 
+    WHERE 
+        1 = 1 
+        AND a.brandcode LIKE '%" . $brandcode . "%'
+        AND a.distcode LIKE '%" . $distcode . "%'
+        AND mop IN ('1','2','3')
+    GROUP BY 
+        a.yop, 
+        a.mop, 
+        a.distcode, 
+        a.distname, 
+        a.brandcode, 
+        a.brandname,
+        a.kodebeban,
+        a.nowterm, 
+        a.nextterm
+) as ach
+LEFT JOIN budgetterm bt ON ach.kodebeban = bt.kodebeban");
+        }
+
+        if ($term == 2) {
+            $data = DB::select("SELECT 2 term,
+        ROUND(((nextterm * (achievement / 100)) - bt.realizationq2), 0) AS budgetafterq2,
+        ach.* 
+FROM (
+    SELECT 
+        a.yop, 
+        a.mop, 
+        a.distcode, 
+        a.distname, 
+        a.brandcode, 
+        a.brandname, 
+        a.kodebeban,
+        nowterm,
+        nextterm,
+        SUM(a.sales) as sales, 
+        SUM(a.target) as target, 
+        CASE
+            WHEN ROUND((SUM(a.sales) / SUM(a.target)) * 100, 2) > 100 THEN 100
+            ELSE ROUND((SUM(a.sales) / SUM(a.target)) * 100, 2)
+        END AS achievement
+    FROM (
+        SELECT 
+            s.yop, 
+            s.mop, 
+            s.distcode, 
+            s.distname, 
+            s.brandcode, 
+            s.brandname, 
+            SUM(sales) as sales, 
+            0 as target,
+            mbb.kodebeban,
+            (CAST(bm.apr AS NUMERIC) + CAST(bm.mei AS NUMERIC)+ CAST(bm.jun AS NUMERIC)) AS nowterm,
+            (CAST(bm.jul AS NUMERIC) + CAST(bm.ags AS NUMERIC)+ CAST(bm.sep AS NUMERIC)) AS nextterm
+        FROM 
+            sales s
+        INNER JOIN m_bridging_budget mbb ON s.itemcode = mbb.itemcode
+        INNER JOIN budget_monitorings bm ON bm.kodebeban = mbb.kodebeban 
+        GROUP BY 
+            s.yop, 
+            s.mop, 
+            s.distcode, 
+            s.distname, 
+            s.brandcode, 
+            s.brandname,
+            mbb.kodebeban,
+            bm.apr,
+            bm.mei,
+            bm.jun,
+            bm.jul,
+            bm.ags,
+            bm.sep
+        UNION ALL 
+        SELECT 
+            tp.yop, 
+            tp.mop, 
+            tp.distcode, 
+            tp.distname, 
+            tp.brandcode, 
+            tp.brandname, 
+            0 as sales, 
+            SUM(target) as target,
+            mbb.kodebeban,
+            (CAST(bm.apr AS NUMERIC) + CAST(bm.mei AS NUMERIC)+ CAST(bm.jun AS NUMERIC)) AS nowterm,
+            (CAST(bm.jul AS NUMERIC) + CAST(bm.ags AS NUMERIC)+ CAST(bm.sep AS NUMERIC)) AS nextterm
+        FROM 
+            targetpenjualan tp
+        INNER JOIN m_bridging_budget mbb ON tp.itemcode = mbb.itemcode
+        INNER JOIN budget_monitorings bm ON bm.kodebeban = mbb.kodebeban 
+        GROUP BY 
+            tp.yop, 
+            tp.mop, 
+            tp.distcode, 
+            tp.distname, 
+            tp.brandcode, 
+            tp.brandname,
+            mbb.kodebeban,
+            bm.apr,
+            bm.mei,
+            bm.jun,
+            bm.jul,
+            bm.ags,
+            bm.sep
+    ) AS a 
+    WHERE 
+        1 = 1 
+        AND a.brandcode LIKE '%" . $brandcode . "%'
+        AND a.distcode LIKE '%" . $distcode . "%'
+        AND mop IN ('4','5','6')
+    GROUP BY 
+        a.yop, 
+        a.mop, 
+        a.distcode, 
+        a.distname, 
+        a.brandcode, 
+        a.brandname,
+        a.kodebeban,
+        a.nowterm, 
+        a.nextterm
+) as ach
+LEFT JOIN budgetterm bt ON ach.kodebeban = bt.kodebeban");
+        }
+
+        if ($term == 3) {
+            $data = DB::select("SELECT 3 term,
+       ROUND(((nextterm * (achievement / 100)) - bt.realizationq3), 0) AS budgetafterq3,
+       ach.* 
+FROM (
+    SELECT 
+        a.yop, 
+        a.mop, 
+        a.distcode, 
+        a.distname, 
+        a.brandcode, 
+        a.brandname, 
+        a.kodebeban,
+        nowterm,
+        nextterm,
+        SUM(a.sales) as sales, 
+        SUM(a.target) as target, 
+        CASE
+            WHEN ROUND((SUM(a.sales) / SUM(a.target)) * 100, 2) > 100 THEN 100
+            ELSE ROUND((SUM(a.sales) / SUM(a.target)) * 100, 2)
+        END AS achievement
+    FROM (
+        SELECT 
+            s.yop, 
+            s.mop, 
+            s.distcode, 
+            s.distname, 
+            s.brandcode, 
+            s.brandname, 
+            SUM(sales) as sales, 
+            0 as target,
+            mbb.kodebeban,
+            (CAST(bm.jul AS NUMERIC) + CAST(bm.ags AS NUMERIC) + CAST(bm.sep AS NUMERIC)) AS nowterm,
+            (CAST(bm.okt AS NUMERIC) + CAST(bm.nop AS NUMERIC) + CAST(bm.des AS NUMERIC)) AS nextterm
+        FROM 
+            sales s
+        INNER JOIN m_bridging_budget mbb ON s.itemcode = mbb.itemcode
+        INNER JOIN budget_monitorings bm ON bm.kodebeban = mbb.kodebeban 
+        GROUP BY 
+            s.yop, 
+            s.mop, 
+            s.distcode, 
+            s.distname, 
+            s.brandcode, 
+            s.brandname,
+            mbb.kodebeban,
+            bm.jul,
+            bm.ags,
+            bm.sep,
+            bm.okt,
+            bm.nop,
+            bm.des
+        UNION ALL 
+        SELECT 
+            tp.yop, 
+            tp.mop, 
+            tp.distcode, 
+            tp.distname, 
+            tp.brandcode, 
+            tp.brandname, 
+            0 as sales, 
+            SUM(target) as target,
+            mbb.kodebeban,
+            (CAST(bm.jul AS NUMERIC) + CAST(bm.ags AS NUMERIC) + CAST(bm.sep AS NUMERIC)) AS nowterm,
+            (CAST(bm.okt AS NUMERIC) + CAST(bm.nop AS NUMERIC) + CAST(bm.des AS NUMERIC)) AS nextterm
+        FROM 
+            targetpenjualan tp
+        INNER JOIN m_bridging_budget mbb ON tp.itemcode = mbb.itemcode
+        INNER JOIN budget_monitorings bm ON bm.kodebeban = mbb.kodebeban 
+        GROUP BY 
+            tp.yop, 
+            tp.mop, 
+            tp.distcode, 
+            tp.distname, 
+            tp.brandcode, 
+            tp.brandname,
+            mbb.kodebeban,
+            bm.jul,
+            bm.ags,
+            bm.sep,
+            bm.okt,
+            bm.nop,
+            bm.des
+    ) AS a 
+    WHERE 
+        1 = 1 
+        AND a.brandcode LIKE '%" . $brandcode . "%'
+        AND a.distcode LIKE '%" . $distcode . "%'
+        AND mop IN ('7','8','9')
+    GROUP BY 
+        a.yop, 
+        a.mop, 
+        a.distcode, 
+        a.distname, 
+        a.brandcode, 
+        a.brandname,
+        a.kodebeban,
+        a.nowterm, 
+        a.nextterm
+) as ach
+LEFT JOIN budgetterm bt ON ach.kodebeban = bt.kodebeban
+");
+        }
+
+        return $data;
+    }
+
+    public function get_data_updatebudget($kodebeban, $term, $arr_pagination)
+    {
 
         if ($term == 1) {
             $data = DB::select("
@@ -1250,6 +1573,324 @@ class targetpenjualan extends Model
                 a.brandname,
                 a.kodebeban,
                 a.nowterm, a.nextterm) as ach
+                LIMIT {$arr_pagination['limit']} OFFSET {$arr_pagination['offset']}");
+        }
+
+        return $data;
+    }
+
+    public function get_data_updatepenampung($kodebeban, $term, $arr_pagination)
+    {
+
+        if ($term == 1) {
+            $data = DB::select("
+        SELECT  1 term,
+                ROUND(((nextterm * (achievement / 100)) - bt.realizationq1), 0) AS budgetafterq1,
+                ach.* 
+            FROM (
+                SELECT 
+        a.yop, 
+        a.mop, 
+        a.distcode, 
+        a.distname, 
+        a.brandcode, 
+        a.brandname, 
+        a.kodebeban,
+        nowterm,
+        nextterm,
+        SUM(a.sales) as sales, 
+        SUM(a.target) as target, 
+        CASE
+        WHEN ROUND((SUM(a.sales) / SUM(a.target)) * 100, 2) > 100 THEN 100
+        ELSE ROUND((SUM(a.sales) / SUM(a.target)) * 100, 2)
+        END AS achievement
+        FROM 
+        (
+            SELECT 
+            s.yop, 
+            s.mop, 
+            s.distcode, 
+            s.distname, 
+            s.brandcode, 
+            s.brandname, 
+            SUM(sales) as sales, 
+            0 as target,
+            mbb.kodebeban,
+            (CAST(bm.jan AS NUMERIC) + CAST(bm.feb AS NUMERIC)+ CAST(bm.mar AS NUMERIC)) AS nowterm,
+            (CAST(bm.apr AS NUMERIC) + CAST(bm.mei AS NUMERIC)+ CAST(bm.jun AS NUMERIC)) AS nextterm
+            FROM 
+            sales s
+            inner join m_bridging_budget mbb on s.itemcode = mbb.itemcode
+            inner join budget_monitorings bm on bm.kodebeban = mbb.kodebeban 
+            GROUP BY 
+            s.yop, 
+            s.mop, 
+            s.distcode, 
+            s.distname, 
+            s.brandcode, 
+            s.brandname,
+            mbb.kodebeban,
+            bm.jan,
+            bm.feb,
+            bm.mar,
+            bm.apr,
+            bm.mei,
+            bm.jun
+            UNION ALL 
+            SELECT 
+            tp.yop, 
+            tp.mop, 
+            tp.distcode, 
+            tp.distname, 
+            tp.brandcode, 
+            tp.brandname, 
+            0 as sales, 
+            SUM(target) as target,
+            mbb.kodebeban,
+            (CAST(bm.jan AS NUMERIC) + CAST(bm.feb AS NUMERIC)+ CAST(bm.mar AS NUMERIC)) AS nowterm,
+            (CAST(bm.apr AS NUMERIC) + CAST(bm.mei AS NUMERIC)+ CAST(bm.jun AS NUMERIC)) AS nextterm
+            FROM 
+            targetpenjualan tp
+            inner join m_bridging_budget mbb on tp.itemcode = mbb.itemcode
+            inner join budget_monitorings bm on bm.kodebeban = mbb.kodebeban 
+            GROUP BY 
+            tp.yop, 
+            tp.mop, 
+            tp.distcode, 
+            tp.distname, 
+            tp.brandcode, 
+            tp.brandname,
+            mbb.kodebeban,
+            bm.jan,
+            bm.feb,
+            bm.mar,
+            bm.apr,
+            bm.mei,
+            bm.jun
+        ) AS a 
+        WHERE 
+        1 = 1 
+        AND mop in ('1','2','3')
+        AND kodebeban LIKE '%" . $kodebeban . "%'
+        GROUP BY 
+        a.yop, 
+        a.mop, 
+        a.distcode, 
+        a.distname, 
+        a.brandcode, 
+        a.brandname,
+        a.kodebeban,
+        a.nowterm, a.nextterm) as ach
+        LEFT JOIN budgetterm bt ON ach.kodebeban = bt.kodebeban
+        LIMIT {$arr_pagination['limit']} OFFSET {$arr_pagination['offset']}");
+        }
+
+
+        if ($term == 2) {
+            $data = DB::select("
+            SELECT 
+                2 term,
+               ROUND(((nextterm * (achievement / 100)) - bt.realizationq2), 0) AS budgetafterq2,
+                ach.* 
+            FROM (
+            SELECT 
+            a.yop, 
+            a.mop, 
+            a.distcode, 
+            a.distname, 
+            a.brandcode, 
+            a.brandname, 
+            a.kodebeban,
+            nowterm,
+            nextterm,
+            SUM(a.sales) as sales, 
+            SUM(a.target) as target, 
+            CASE
+            WHEN ROUND((SUM(a.sales) / SUM(a.target)) * 100, 2) > 100 THEN 100
+            ELSE ROUND((SUM(a.sales) / SUM(a.target)) * 100, 2)
+            END AS achievement
+            FROM 
+            (
+                SELECT 
+                s.yop, 
+                s.mop, 
+                s.distcode, 
+                s.distname, 
+                s.brandcode, 
+                s.brandname, 
+                SUM(sales) as sales, 
+                0 as target,
+                mbb.kodebeban,
+                (CAST(bm.apr AS NUMERIC) + CAST(bm.mei AS NUMERIC)+ CAST(bm.jun AS NUMERIC)) AS nowterm,
+                (CAST(bm.jul AS NUMERIC) + CAST(bm.ags AS NUMERIC)+ CAST(bm.sep AS NUMERIC)) AS nextterm
+                FROM 
+                sales s
+                inner join m_bridging_budget mbb on s.itemcode = mbb.itemcode
+                inner join budget_monitorings bm on bm.kodebeban = mbb.kodebeban 
+                GROUP BY 
+                s.yop, 
+                s.mop, 
+                s.distcode, 
+                s.distname, 
+                s.brandcode, 
+                s.brandname,
+                mbb.kodebeban,
+                bm.apr,
+                bm.mei,
+                bm.jun,
+                bm.jul,
+                bm.ags,
+                bm.sep
+                UNION ALL 
+                SELECT 
+                tp.yop, 
+                tp.mop, 
+                tp.distcode, 
+                tp.distname, 
+                tp.brandcode, 
+                tp.brandname, 
+                0 as sales, 
+                SUM(target) as target,
+                mbb.kodebeban,
+                (CAST(bm.apr AS NUMERIC) + CAST(bm.mei AS NUMERIC)+ CAST(bm.jun AS NUMERIC)) AS nowterm,
+                (CAST(bm.jul AS NUMERIC) + CAST(bm.ags AS NUMERIC)+ CAST(bm.sep AS NUMERIC)) AS nextterm
+                FROM 
+                targetpenjualan tp
+                inner join m_bridging_budget mbb on tp.itemcode = mbb.itemcode
+                inner join budget_monitorings bm on bm.kodebeban = mbb.kodebeban 
+                GROUP BY 
+                tp.yop, 
+                tp.mop, 
+                tp.distcode, 
+                tp.distname, 
+                tp.brandcode, 
+                tp.brandname,
+                mbb.kodebeban,
+                bm.apr,
+                bm.mei,
+                bm.jun,
+                bm.jul,
+                bm.ags,
+                bm.sep
+            ) AS a 
+            WHERE 
+            1 = 1 
+            AND mop in ('4','5','6')
+            AND kodebeban LIKE '%" . $kodebeban . "%'
+            GROUP BY 
+            a.yop, 
+            a.mop, 
+            a.distcode, 
+            a.distname, 
+            a.brandcode, 
+            a.brandname,
+            a.kodebeban,
+            a.nowterm, a.nextterm) as ach
+            LEFT JOIN budgetterm bt ON ach.kodebeban = bt.kodebeban
+            LIMIT {$arr_pagination['limit']} OFFSET {$arr_pagination['offset']}");
+        }
+
+        if ($term == 3) {
+            $data = DB::select("
+                SELECT
+                3 term, 
+                ROUND(((nextterm * (achievement / 100)) - bt.realizationq3), 0) AS budgetafterq3,
+                ach.* 
+            FROM (
+                SELECT 
+                a.yop, 
+                a.mop, 
+                a.distcode, 
+                a.distname, 
+                a.brandcode, 
+                a.brandname, 
+                a.kodebeban,
+                nowterm,
+                nextterm,
+                SUM(a.sales) as sales, 
+                SUM(a.target) as target, 
+                CASE
+                WHEN ROUND((SUM(a.sales) / SUM(a.target)) * 100, 2) > 100 THEN 100
+                ELSE ROUND((SUM(a.sales) / SUM(a.target)) * 100, 2)
+                END AS achievement
+                FROM 
+                (
+                    SELECT 
+                    s.yop, 
+                    s.mop, 
+                    s.distcode, 
+                    s.distname, 
+                    s.brandcode, 
+                    s.brandname, 
+                    SUM(sales) as sales, 
+                    0 as target,
+                    mbb.kodebeban,
+                    (CAST(bm.jul AS NUMERIC) + CAST(bm.ags AS NUMERIC)+ CAST(bm.sep AS NUMERIC)) AS nowterm,
+                    (CAST(bm.okt AS NUMERIC) + CAST(bm.nop AS NUMERIC)+ CAST(bm.des AS NUMERIC)) AS nextterm
+                    FROM 
+                    sales s
+                    inner join m_bridging_budget mbb on s.itemcode = mbb.itemcode
+                    inner join budget_monitorings bm on bm.kodebeban = mbb.kodebeban 
+                    GROUP BY 
+                    s.yop, 
+                    s.mop, 
+                    s.distcode, 
+                    s.distname, 
+                    s.brandcode, 
+                    s.brandname,
+                    mbb.kodebeban,
+                    bm.jul,
+                    bm.ags,
+                    bm.sep,
+                    bm.okt,
+                    bm.nop,
+                    bm.des
+                    UNION ALL 
+                    SELECT 
+                    tp.yop, 
+                    tp.mop, 
+                    tp.distcode, 
+                    tp.distname, 
+                    tp.brandcode, 
+                    tp.brandname, 
+                    0 as sales, 
+                    SUM(target) as target,
+                    mbb.kodebeban,
+                    (CAST(bm.jul AS NUMERIC) + CAST(bm.ags AS NUMERIC)+ CAST(bm.sep AS NUMERIC)) AS nowterm,
+                    (CAST(bm.okt AS NUMERIC) + CAST(bm.nop AS NUMERIC)+ CAST(bm.des AS NUMERIC)) AS nextterm
+                    FROM 
+                    targetpenjualan tp
+                    inner join m_bridging_budget mbb on tp.itemcode = mbb.itemcode
+                    inner join budget_monitorings bm on bm.kodebeban = mbb.kodebeban 
+                    GROUP BY 
+                    tp.yop, 
+                    tp.mop, 
+                    tp.distcode, 
+                    tp.distname, 
+                    tp.brandcode, 
+                    tp.brandname,
+                    mbb.kodebeban,
+                    bm.jul,
+                    bm.ags,
+                    bm.sep,
+                    bm.okt,
+                    bm.nop,
+                    bm.des
+                ) AS a 
+                WHERE 
+                1 = 1 
+                AND mop in ('7','8','9')
+                AND kodebeban LIKE '%" . $kodebeban . "%'
+                GROUP BY 
+                a.yop, 
+                a.mop, 
+                a.distcode, 
+                a.distname, 
+                a.brandcode, 
+                a.brandname,
+                a.kodebeban,
+                a.nowterm, a.nextterm) as ach
+                LEFT JOIN budgetterm bt ON ach.kodebeban = bt.kodebeban
                 LIMIT {$arr_pagination['limit']} OFFSET {$arr_pagination['offset']}");
         }
 

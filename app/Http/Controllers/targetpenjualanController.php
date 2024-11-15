@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use App\Models\targetpenjualan;
 use App\Models\PublicModel;
 use App\Models\BudgetMonitoring;
+use App\Models\Penampung;
 
 class targetpenjualanController extends Controller
 {
@@ -90,6 +91,21 @@ class targetpenjualanController extends Controller
             200
         );
     }
+    public function showsuggestionpenampung(String $distcode, String $brandcode, String $term, Request $request): JsonResponse
+    {
+        $URL =  URL::current();
+
+        // return $request;
+        $count = (new targetpenjualan())->count();
+        $arr_pagination = (new PublicModel())->pagination_without_search($URL, $request->limit, $request->offset);
+        $todos = (new targetpenjualan())->get_data_penampung($distcode, $brandcode, $term, $arr_pagination);
+        // print_r($todos); 
+
+        return response()->json(
+            (new PublicModel())->array_respon_200_table($todos, $count, $arr_pagination),
+            200
+        );
+    }
     public function showsuggestionbyparameter(String $distcode, String $brandcode, String $term, Request $request): JsonResponse
     {
         $URL =  URL::current();
@@ -110,19 +126,10 @@ class targetpenjualanController extends Controller
     {
         $URL =  URL::current();
 
-        // return $request;
         $count = (new targetpenjualan())->count();
         $arr_pagination = (new PublicModel())->pagination_without_search($URL, $request->limit, $request->offset);
         $todos = (new targetpenjualan())->get_data_updatebudget($kodebeban, $term, $arr_pagination);
-        // print_r($todos); 
-        // foreach($todos as $key => $value) {
-        //     $todos['aftera'] = $value->budgetaftera;
-        //     $todos['afterb'] = $value->budgetafterb;
-        // }
-
-        // $update = 'UPDATE budget_monitorings set apr='$todos['aftera'], 
-        // mei=0,jun=0 where kodebeban = $kodebeban';
-
+        
         return response()->json(
             (new PublicModel())->array_respon_200_table($todos, $count, $arr_pagination),
             200
@@ -209,13 +216,15 @@ class targetpenjualanController extends Controller
         }
     }
 
-    public function update(Request $req, String $kodebeban, String $term, $arr_pagination)
+    public function update(Request $req, String $kodebeban, String $term)
     {
         DB::beginTransaction();
         $user_id = 'USER TEST';
         $data = $this->validate($req, []);
 
         try {
+            $URL =  URL::current();
+            $arr_pagination = (new PublicModel())->pagination_without_search($URL, $req->limit, $req->offset);
             $target = (new targetpenjualan)->get_data_updatebudget($kodebeban, $term , $arr_pagination);
             // $target->fill($data)->save();
 
@@ -258,21 +267,19 @@ class targetpenjualanController extends Controller
             ], 409);
         }
     }
-    public function updatea(Request $req, String $kodebeban, String $term, $arr_pagination)
+    
+    public function updatea(Request $req, String $kodebeban, String $term)
     {
         DB::beginTransaction();
         $user_id = 'USER TEST';
         $data = $this->validate($req, []);
 
-        try {
+        try {        
+            $URL =  URL::current();
+            $arr_pagination = (new PublicModel())->pagination_without_search($URL, $req->limit, $req->offset);
             $target = (new targetpenjualan)->get_data_updatebudget($kodebeban, $term, $arr_pagination);
-            // $target->fill($data)->save();
 
             $budgetaftera = $target[0]->budgetaftera;
-
-            // masterbrand::where('id', $id)->update([
-            //     'updated_by' => $user_id,
-            // ]);
 
             if ($term == 1) {
                 BudgetMonitoring::where('kodebeban', $kodebeban)->update([
@@ -289,6 +296,154 @@ class targetpenjualanController extends Controller
             } else if ($term == 3) {
                 BudgetMonitoring::where('kodebeban', $kodebeban)->update([
                     'okt' => $budgetaftera,
+                    'nop' => 0,
+                    'des' => 0,
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'code' => 201,
+                'status' => true,
+                'message' => 'Updated successfully',
+                'data' => $target
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'code' => 409,
+                'status' => false,
+                'message' => 'Failed to update data',
+            ], 409);
+        }
+    }
+
+    public function updatepenampungq1(Request $req, String $kodebeban, String $term)
+    {
+        DB::beginTransaction();
+        $user_id = 'USER TEST';
+        $data = $this->validate($req, []);
+
+        try {        
+            $URL =  URL::current();
+            $arr_pagination = (new PublicModel())->pagination_without_search($URL, $req->limit, $req->offset);
+            $target = (new targetpenjualan)->get_data_updatepenampung($kodebeban, $term, $arr_pagination);
+
+            $budgetafterq1 = $target[0]->budgetafterq1;
+
+            if ($term == 1) {
+                Penampung::where('kodebeban', $kodebeban)->update([
+                    'apr' => $budgetafterq1,
+                    'mei' => 0,
+                    'jun' => 0,
+                ]);
+            } else if ($term == 2) {
+                Penampung::where('kodebeban', $kodebeban)->update([
+                    'jul' => $budgetafterq1,
+                    'ags' => 0,
+                    'sep' => 0,
+                ]);
+            } else if ($term == 3) {
+                Penampung::where('kodebeban', $kodebeban)->update([
+                    'okt' => $budgetafterq1,
+                    'nop' => 0,
+                    'des' => 0,
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'code' => 201,
+                'status' => true,
+                'message' => 'Updated successfully',
+                'data' => $target
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'code' => 409,
+                'status' => false,
+                'message' => 'Failed to update data',
+            ], 409);
+        }
+    }
+    public function updatepenampungq2(Request $req, String $kodebeban, String $term)
+    {
+        DB::beginTransaction();
+        $user_id = 'USER TEST';
+        $data = $this->validate($req, []);
+
+        try {        
+            $URL =  URL::current();
+            $arr_pagination = (new PublicModel())->pagination_without_search($URL, $req->limit, $req->offset);
+            $target = (new targetpenjualan)->get_data_updatepenampung($kodebeban, $term, $arr_pagination);
+
+            $budgetafterq2 = $target[0]->budgetafterq2;
+
+            if ($term == 1) {
+                BudgetMonitoring::where('kodebeban', $kodebeban)->update([
+                    'apr' => $budgetafterq2,
+                    'mei' => 0,
+                    'jun' => 0,
+                ]);
+            } else if ($term == 2) {
+                BudgetMonitoring::where('kodebeban', $kodebeban)->update([
+                    'jul' => $budgetafterq2,
+                    'ags' => 0,
+                    'sep' => 0,
+                ]);
+            } else if ($term == 3) {
+                BudgetMonitoring::where('kodebeban', $kodebeban)->update([
+                    'okt' => $budgetafterq2,
+                    'nop' => 0,
+                    'des' => 0,
+                ]);
+            }
+
+            DB::commit();
+            return response()->json([
+                'code' => 201,
+                'status' => true,
+                'message' => 'Updated successfully',
+                'data' => $target
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'code' => 409,
+                'status' => false,
+                'message' => 'Failed to update data',
+            ], 409);
+        }
+    }
+    public function updatepenampungq3(Request $req, String $kodebeban, String $term)
+    {
+        DB::beginTransaction();
+        $user_id = 'USER TEST';
+        $data = $this->validate($req, []);
+
+        try {        
+            $URL =  URL::current();
+            $arr_pagination = (new PublicModel())->pagination_without_search($URL, $req->limit, $req->offset);
+            $target = (new targetpenjualan)->get_data_updatepenampung($kodebeban, $term, $arr_pagination);
+
+            $budgetafterq3 = $target[0]->budgetafterq3;
+
+            if ($term == 1) {
+                BudgetMonitoring::where('kodebeban', $kodebeban)->update([
+                    'apr' => $budgetafterq3,
+                    'mei' => 0,
+                    'jun' => 0,
+                ]);
+            } else if ($term == 2) {
+                BudgetMonitoring::where('kodebeban', $kodebeban)->update([
+                    'jul' => $budgetafterq3,
+                    'ags' => 0,
+                    'sep' => 0,
+                ]);
+            } else if ($term == 3) {
+                BudgetMonitoring::where('kodebeban', $kodebeban)->update([
+                    'okt' => $budgetafterq3,
                     'nop' => 0,
                     'des' => 0,
                 ]);

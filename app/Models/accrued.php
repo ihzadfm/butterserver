@@ -30,7 +30,7 @@ class accrued extends Model
 
         $data = accrued::where(function ($query) use ($search) {
             $query->whereRaw("LOWER(\"no_pp\") LIKE ?", ["%$search%"])
-                ->orWhereRaw("LOWER(\"kode_beban\") LIKE ?", ["%$search%"])
+                ->orWhereRaw("LOWER(\"kodebeban\") LIKE ?", ["%$search%"])
                 ->orWhereRaw("LOWER(\"jenis_realisasi\") LIKE ?", ["%$search%"])
                 ->orWhereRaw("LOWER(\"divisi\") LIKE ?", ["%$search%"])
                 ->orWhereRaw("LOWER(\"nama_pp\") LIKE ?", ["%$search%"])
@@ -49,7 +49,7 @@ class accrued extends Model
             'id',
             'no_pp',
             'id_detail',
-            'kode_beban',
+            'kodebeban',
             'nilai_pp',
             'bulan',
             'tahun',
