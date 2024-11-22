@@ -127,6 +127,15 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->delete('/salesdelete', ['uses' => 'salesController@deleteAll']);
     $router->post('/salesBulky', ['uses' => 'salesController@storeBulky']);
 
+    //history
+    $router->get('/historybudget', ['uses' => 'reclassController@gethistorybudget']);
+    $router->post('/historybudget', ['uses' => 'HistoryBudgetController@store']); // Menyimpan data baru
+    $router->get('/historybudget/{id}', ['uses' => 'HistoryBudgetController@show']); // Menampilkan detail data berdasarkan ID
+    $router->put('/historybudget/{id}', ['uses' => 'HistoryBudgetController@update']); // Memperbarui data berdasarkan ID
+    $router->delete('/historybudget/{id}', ['uses' => 'HistoryBudgetController@destroy']);
+    $router->delete('/historybudgetdelete', ['uses' => 'HistoryBudgetController@deleteAll']);
+    $router->post('/historybudgetBulky', ['uses' => 'HistoryBudgetController@storeBulky']);
+
     $router->get('/bridgingbrand', ['uses' => 'masterbridgingbrandController@paging']);
 
 
@@ -139,5 +148,16 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/getdistcodeallbrand', ['uses' => 'distcodeController@pagingbrand']);
     $router->get('/getdistcodeallyear', ['uses' => 'distcodeController@pagingyear']);
     $router->get('/getdistcodeallmonth', ['uses' => 'distcodeController@pagingmonth']);
+
+    //OPTION RECLASS
+    $router->get('/reclasskodebeban', ['uses' => 'reclassController@pagingkodebeban']);
+    $router->post('/reclassupdate', ['uses' => 'reclassController@getdatakodebebanbybulan']);
+    $router->get('/reclassbudgetmonitoring', ['uses' => 'reclassController@getbudgetmonitoring']);
+    $router->get('/reclassbulan', ['uses' => 'reclassController@pagingbulan']);
+    $router->get('/searchhistorybudget', ['uses' => 'reclassController@searchhistorybudget']);
+    $router->get('/excelhistorybudget', ['uses' => 'reclassController@excelhistorybudget']);
+
+    // $router->get('/reclassrealokasi', ['uses' => 'reclassController@pagingrealokasi']);
+    // $router->get('/reclassbudget', ['uses' => 'reclassController@pagingbudget']);
 
 });
