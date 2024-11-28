@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Stmt\Static_;
 
 class targetpenjualan extends Model
 {
@@ -1932,4 +1933,6 @@ LEFT JOIN budgetterm bt ON ach.kodebeban = bt.kodebeban
         // ->orderBy('id', 'ASC')->toSql();
         return $data;
     }
+
+
 }

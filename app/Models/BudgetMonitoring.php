@@ -23,6 +23,139 @@ class BudgetMonitoring extends Model
         return $date->format('Y-m-d H:i:s');
     }
 
+    public static function adjusmentaccrued($kodebeban, $ach)
+    {
+        $data = self::where('kodebeban', $kodebeban)->first();
+        $accruedpp = accrued::where('kodebeban', $kodebeban)->first();
+
+        $q1 = (int) $data->jan + (int) $data->feb + (int) $data->mar;
+        $q2 = (int) $data->apr + (int) $data->mei + (int) $data->jun;
+        $q3 = (int) $data->jul + (int) $data->ags + (int) $data->sep;
+        $q4 = (int) $data->okt + (int) $data->nov + (int) $data->des;
+
+
+        $hq1 = ((float) $ach / 100) * $q1;
+        $hq2 = ((float) $ach / 100) * $q2;
+        $hq3 = ((float) $ach / 100) * $q3;
+        $hq4 = ((float) $ach / 100) * $q4;
+
+        $updates = [];
+
+        // Perkondisian Q2
+        if ((int) $accruedpp->nilai_realisasi > $q1) {
+            $selisihrealisasi1 = ($hq1 - $q1);
+            $updates['apr'] = $q2 + $selisihrealisasi1;
+            $updates['mei'] = '0';
+            $updates['jun'] = '0';
+        }
+
+        // Perkondisian Q3
+        if ((int) $accruedpp->nilai_realisasi > $q2) {
+            $selisihrealisasi2 = ($hq2 - $q2);
+            $updates['jul'] = $q3 + $selisihrealisasi2;
+            $updates['ags'] = '0';
+            $updates['sep'] = '0';
+        }
+
+        // Perkondisian Q4
+        if ((int) $accruedpp->nilai_realisasi > $q3) {
+            $selisihrealisasi3 = ($hq3 - $q3);
+            $updates['okt'] = $q4 + $selisihrealisasi3;
+            $updates['nop'] = '0';
+            $updates['des'] = '0';
+        }
+
+        if (!empty($updates)) {
+            $data->update($updates);
+        }
+
+        return [
+            'a' => (int) $accruedpp->nilai_realisasi > $q1,
+            'b' => (int) $accruedpp->nilai_realisasi > $q2,
+            'c' => (int) $accruedpp->nilai_realisasi > $q3,
+            'd' => (int) $accruedpp->nilai_realisasi,
+            'e' => $q1,
+            'f' => $q2,
+            'g' => $q3,
+            'h' => $accruedpp->nilai_realisasi,
+            'i' =>  (int) $q2 + ((int) $hq1 -  (int) $q1),
+            'j' => $updates,
+            'k' => $hq1,
+            'L' => $ach,
+        ];
+    }
+
+    public static function adjusmentrealisasi($kodebeban, $ach)
+    {
+        $data = self::where('kodebeban', $kodebeban)->first();
+        $accruedpp = accrued::where('kodebeban', $kodebeban)->first();
+
+        $q1 = (int) $data->jan + (int) $data->feb + (int) $data->mar;
+        $q2 = (int) $data->apr + (int) $data->mei + (int) $data->jun;
+        $q3 = (int) $data->jul + (int) $data->ags + (int) $data->sep;
+        $q4 = (int) $data->okt + (int) $data->nov + (int) $data->des;
+
+        $rq1 = (float) $data->realizationn1 + (float) $data->realizationn2 + (float) $data->realizationn3;
+        $rq2 = (float) $data->realizationn4 + (float) $data->realizationn5 + (float) $data->realizationn6;
+        $rq3 = (float) $data->realizationn7 + (float) $data->realizationn8 + (float) $data->realizationn9;
+        $rq4 = (float) $data->realizationn10 + (float) $data->realizationn11 + (float) $data->realizationn12;
+
+
+        $hq1 = ((float) $ach / 100) * $q1;
+        $hq2 = ((float) $ach / 100) * $q2;
+        $hq3 = ((float) $ach / 100) * $q3;
+        $hq4 = ((float) $ach / 100) * $q4;
+
+        $updates = [];
+
+        // Perkondisian Q2
+        if ((int) $rq1 > $q1) {
+            $selisihrealisasi1 = ($hq1 - $q1);
+            $updates['apr'] = $q2 + $selisihrealisasi1;
+            $updates['mei'] = '0';
+            $updates['jun'] = '0';
+        }
+
+        // Perkondisian Q3
+        if ((int) $rq2 > $q2) {
+            $selisihrealisasi2 = ($hq2 - $q2);
+            $updates['jul'] = $q3 + $selisihrealisasi2;
+            $updates['ags'] = '0';
+            $updates['sep'] = '0';
+        }
+
+        // Perkondisian Q4
+        if ((int) $rq3 > $q3) {
+            $selisihrealisasi3 = ($hq3 - $q3);
+            $updates['okt'] = $q4 + $selisihrealisasi3;
+            $updates['nop'] = '0';
+            $updates['des'] = '0';
+        }
+
+        if (!empty($updates)) {
+            $data->update($updates);
+        }
+
+        $BudgetMonitoring = BudgetMonitoring::where('kodebeban', $kodebeban)->first();
+        return [
+            'a' => (int) $rq1 > $q1,
+            'b' => (int) $rq2 > $q2,
+            'c' => (int) $rq3 > $q3,
+            'd' => (int) $rq1,
+            'e' => $q1,
+            'f' => $q2,
+            'g' => $q3,
+            'h' => $q4,
+            'i' =>  (int) $q2 + ((int) $hq1 -  (int) $q1),
+            'L' => $ach,
+            'rq2' => $rq2,
+            'rq3' => $rq3,
+            'rq4' => $rq4,
+            'hasil' => $BudgetMonitoring
+        ];
+    }
+
+
     public function get_data_x($search, $arr_pagination)
     {
         if (!empty($search)) $arr_pagination['offset'] = 0;

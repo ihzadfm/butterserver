@@ -109,6 +109,9 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/excelsuggestion/{distcode}/{brandcode}/{term}', ['uses' => 'vstargetsalesController@excelsuggestion']);
     $router->put('/putbudgetafter/{kodebeban}/{term}', ['uses' => 'targetpenjualanController@update']);
     $router->put('/putbudgetaftera/{kodebeban}/{term}', ['uses' => 'targetpenjualanController@updatea']);
+    //adjusment
+    $router->get('/adjusmentaccrued', ['uses' => 'targetpenjualanController@adjusmentaccrued']);
+    $router->get('/adjusmentrealisasi', ['uses' => 'targetpenjualanController@adjusmentrealisasi']);
 
     $router->get('/targetpenjualanparam/{distcode}/{brandcode}/{yop}/{mop}', ['uses' => 'targetpenjualanController@showdatabyparameter']);
     $router->put('/updatebudget/{kodebeban}/{term}', ['uses' => 'targetpenjualanController@updatebudget']);

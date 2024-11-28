@@ -11,6 +11,7 @@ use App\Models\targetpenjualan;
 use App\Models\PublicModel;
 use App\Models\BudgetMonitoring;
 use App\Models\Penampung;
+use Exception;
 
 class targetpenjualanController extends Controller
 {
@@ -19,6 +20,52 @@ class targetpenjualanController extends Controller
     public function __construct()
     {
         $this->judul_halaman_notif = 'Target Penjualan';
+    }
+
+    public function adjusmentaccrued(Request $request): JsonResponse
+    {
+        $kodebeban = $request->kodebeban;
+        $ach = $request->ach;
+        try {
+            $data = BudgetMonitoring::adjusmentaccrued($kodebeban, $ach);
+
+            return response()->json([
+                'code' => 201,
+                'status' => true,
+                'data' => $data,
+                'ach' => $request,
+                'message' => $this->judul_halaman_notif . " berhasil di fetch.",
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'code' => 500,
+                'status' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function adjusmentrealisasi(Request $request): JsonResponse
+    {
+        $kodebeban = $request->kodebeban;
+        $ach = $request->ach;
+        try {
+            $data = BudgetMonitoring::adjusmentrealisasi($kodebeban, $ach);
+
+            return response()->json([
+                'code' => 201,
+                'status' => true,
+                'data' => $data,
+                'ach' => $request,
+                'message' => $this->judul_halaman_notif . " berhasil di fetch.",
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'code' => 500,
+                'status' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function deleteAll()
@@ -121,6 +168,8 @@ class targetpenjualanController extends Controller
             200
         );
     }
+
+    
 
     public function updatebudget(String $kodebeban, $term, Request $request): JsonResponse
     {

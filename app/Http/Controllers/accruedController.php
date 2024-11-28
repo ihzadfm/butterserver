@@ -11,6 +11,7 @@ use App\Models\accrued;
 use App\Models\PublicModel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Validator;
 
 class accruedController extends Controller
 {
@@ -211,39 +212,65 @@ class accruedController extends Controller
     }
 
     public function storeBulky(Request $req): JsonResponse
-    {
-        DB::beginTransaction();
+{
+    DB::beginTransaction();
 
-        try {
-            $data_csv = json_decode(json_encode($req->csv), true);
-            foreach ($data_csv as $value) {
-                // $tgl = Carbon::createFromFormat('d/m/Y', $value['tgl_realisasi'])->format('Y-m-d');
+    try {
+        $data_csv = json_decode(json_encode($req->csv), true);
+
+        foreach ($data_csv as $value) {
+            // Validasi tgl_realisasi
+            if (!empty($value['tgl_realisasi'])) {
                 $value['tgl_realisasi'] = Carbon::createFromFormat('d/m/Y', $value['tgl_realisasi'])->format('Y-m-d');
-
-                // Format tgl_input to Y-m-d H:i:s if it exists in the data
-                if (isset($value['tgl_input']) && !empty($value['tgl_input'])) {
-                    $value['tgl_input'] = Carbon::createFromFormat('d/m/Y H:i', $value['tgl_input'])->format('Y-m-d H:i:s');
-                }
-                $value['created_by']   = 'user_test';
-                $value['updated_by']   = 'user_test';
-                $data['tgl_input'] = Date::now();
-
-                accrued::create($value);
+            } else {
+                $value['tgl_realisasi'] = null;
             }
 
-            DB::commit();
-            return response()->json([
-                'code' => 201,
-                'status' => true,
-                'message' => 'Created successfully',
-            ], 201);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'status' => false,
-                'message' => 'Failed to create data',
-                'error' => $e->getMessage()
-            ], 403);
+            // Validasi tgl_input
+            if (!empty($value['tgl_input'])) {
+                $value['tgl_input'] = Carbon::createFromFormat('d/m/Y H:i', $value['tgl_input'])->format('Y-m-d H:i:s');
+            } else {
+                $value['tgl_input'] = null;
+            }
+
+            // Tambahkan created_by dan updated_by
+            $value['created_by'] = 'user_test';
+            $value['updated_by'] = 'user_test';
+
+            // Validasi input data
+            $validated = Validator::make($value, [
+                'no_pp' => 'required|string',
+                'id_detail' => 'required|integer',
+                'kodebeban' => 'required|string',
+                'nilai_pp' => 'required|numeric',
+                'bulan' => 'required|integer',
+                'tahun' => 'required|integer',
+                'tgl_realisasi' => 'nullable|date',
+                'tgl_input' => 'nullable|date_format:Y-m-d H:i:s',
+            ]);
+
+            if ($validated->fails()) {
+                throw new \Exception('Invalid input data: ' . json_encode($validated->errors()));
+            }
+
+            // Simpan data
+            accrued::create($value);
         }
+
+        DB::commit();
+        return response()->json([
+            'code' => 201,
+            'status' => true,
+            'message' => 'Created successfully',
+        ], 201);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json([
+            'status' => false,
+            'message' => 'Failed to create data',
+            'error' => $e->getMessage(),
+        ], 403);
     }
+}
+
 }
