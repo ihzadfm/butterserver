@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('no_pp', 50); // no_pp
             $table->string('id_detail'); // id_detail
-            $table->string('kode_beban', 50); // kode_beban
+            $table->string('kodebeban', 50); // kode_beban
             $table->decimal('nilai_pp', 15, 2); // nilai_pp
             $table->integer('bulan'); // bulan
             $table->year('tahun'); // tahun
