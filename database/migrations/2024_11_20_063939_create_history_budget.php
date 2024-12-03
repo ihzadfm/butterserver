@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('history_budget', function (Blueprint $table) {
             $table->id();
-            $table->string("kodehistory");
             $table->string("kodebeban1");
             $table->string("kodebeban2");
             $table->string("bulan1");
