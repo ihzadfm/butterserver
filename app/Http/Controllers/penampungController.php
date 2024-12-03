@@ -21,7 +21,8 @@ class penampungController extends Controller
     }
 
     public function insertrealizationterm(Request $req){
-        return $req -> all();
+        return $req -> post();
+        // $request->request->remove('');
         penampung::create($req->all());
     }
 
