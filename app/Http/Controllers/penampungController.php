@@ -21,9 +21,7 @@ class penampungController extends Controller
     }
 
     public function insertrealizationterm(Request $req){
-        return $req -> post();
-        // $request->request->remove('');
-        penampung::create($req->all());
+        penampung::create($req->post());
     }
 
     public function showsuggestionpenampung(String $distcode, String $brandcode, String $term, Request $request): JsonResponse
